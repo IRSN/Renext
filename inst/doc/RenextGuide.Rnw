@@ -1,0 +1,183 @@
+%% -*- fill-column: 80; comment-column: 50; -*-
+\documentclass[a4paper]{report}
+% \VignetteIndexEntry{Introduction to Renext}
+% \VignetteDepends{Renext}
+% \VignetteKeyword{extreme values}
+\usepackage{amsmath, amsfonts, amssymb, amsthm}
+\usepackage[english]{babel}
+
+\usepackage{url}
+\usepackage{fullpage}
+\usepackage{boxedminipage}
+\usepackage{booktabs}
+\usepackage{hyperref}
+\usepackage{makeidx}
+\usepackage{titlesec}
+\usepackage{color}
+\usepackage{afterpage}
+\usepackage[utf8]{inputenc}
+
+\newcommand\blankpage{%
+    \null
+    \thispagestyle{empty}%
+    \addtocounter{page}{-1}%
+    \newpage}
+
+%% bibliography
+\if@shortnames
+  \usepackage[authoryear,round]{natbib}
+\else
+  \usepackage[authoryear,round,longnamesfirst]{natbib}
+\fi
+\bibpunct{(}{)}{;}{a}{}{,}
+\bibliographystyle{jss}
+
+\makeindex
+
+%% \parskip=1.5ex plus 1.5ex minus 1.25ex
+%% \titleformat{\section}[block]{\normalfont\large\bfseries}{\thesection}{1em}{}
+%% \titlespacing{\section}{0em}{2em plus 3em minus 0.5em}{0.15em plus 0.15em
+%%   minus 0.125em}
+%% \titleformat{\subsection}[block]{\normalfont\large\itshape}{\thesubsection}{1em}{}
+%% \titlespacing{\subsection}{0em}{1em plus 2em minus 0.5em}{-0.15em plus 0.15em
+%%   minus 0.125em}
+
+%%======================================================== 
+\newcommand{\pkg}[1]{\textbf{#1}}
+\newcommand{\Esp}{\mathbb{E}}
+\newcommand{\Cov}{\textrm{Cov}}
+\newcommand{\Corr}{\textrm{Corr}}
+\newcommand{\Var}{\textrm{Var}}
+\newcommand{\m}{\mathbf}   
+\newcommand{\bs}{\boldsymbol}
+\newcommand{\pCond}[2]{\left( #1 \;\middle\vert\; #2 \right)}
+\newcommand{\bCond}[2]{\left[ #1 \;\middle\vert\; #2 \right]}
+\newcommand{\Cond}[2]{\left. #1 \;\middle\vert\; #2 \right.}
+%%========================================================= 
+%% Changed in 1.5.0
+%%\definecolor{InputColor}{rgb}{0.600,0.060,0.360} 
+\definecolor{InputColor}{rgb}{0.300,0.060,0.660}
+\definecolor{OutputColor}{rgb}{0.133,0.543,0.133}
+\definecolor{Gray}{rgb}{0.5,0.5,0.5}
+%%=========================================================
+\newenvironment{Prov}
+   {\medskip \par \noindent%
+    \sf \color{blue} }%
+  {\medskip \par}
+
+\title{
+  %% \rule{0pt}{3cm}
+  %%\begin{tabular}{c}
+  %%  \noalign{\hrule height 1pt}
+  %%\Huge \ 
+  the Renext package
+  user guide 
+}
+
+\author{Yves Deville\rule{0pt}{140pt}}
+
+
+\begin{document}
+\SweaveOpts{prefix.string=Rgraphics/fig, eps=FALSE, pdf=TRUE, keep.source=TRUE}
+\setkeys{Gin}{width=7cm}
+<<options, echo = FALSE>>=
+options(prompt = "> ", continue = "  ", width = 80, encoding = "UTF8")
+l <- Sys.setlocale(category = "LC_TIME", locale="en_GB.UTF-8")
+Renext.Version <- packageVersion("Renext")
+library(Renext)
+@
+
+\pagenumbering{roman}   % i, ii, iii, iv, ...
+
+%%\maketitle
+\thispagestyle{empty}
+
+\begin{center}
+  \rule{0pt}{200pt}
+  \begin{tabular}{c}
+    \noalign{\hrule height 1pt}
+    {\Huge \sf the \textbf{Renext} package}\rule{0pt}{24pt}\\
+    {\huge \sf user guide} \rule[-12pt]{0pt}{32pt}\\ 
+    \noalign{\hrule height 1pt}
+  \end{tabular}
+  
+ 
+  \begin{tabular}{c}
+    {\Large \sf Yves Deville}\rule{0pt}{5cm}\\
+    {\large \sf \today, Renext version \Sexpr{Renext.Version}} \rule{0pt}{5cm}\\
+  \end{tabular}
+
+\end{center}
+
+\pagebreak
+
+%% first page: copyright only
+\thispagestyle{empty}
+\rule{0pt}{\textheight}
+\begin{tabular}{l}
+  %%\hline
+  \noalign{\hrule height 2pt}
+  Copyright \copyright \: 2010, 2011, 2012, 2013, 2015 IRSN-Yves Deville\rule{0pt}{12pt}
+\end{tabular}
+
+\pagebreak
+\setcounter{page}{1}
+\tableofcontents
+
+%%\DefineVerbatimEnvironment{Sinput}{Verbatim} {xleftmargin=2em}
+%%\DefineVerbatimEnvironment{Soutput}{Verbatim}{xleftmargin=2em}
+%%\DefineVerbatimEnvironment{Scode}{Verbatim}{xleftmargin=2em}
+
+%% Customisation as suggested by Ross Ihaka: indent, etc.
+
+\fvset{listparameters={\setlength{\topsep}{0pt}}}
+\renewenvironment{Schunk}{\vspace{\topsep}}{\vspace{\topsep}}
+
+\DefineVerbatimEnvironment{Sinput}{Verbatim}{framesep=2pt, %
+  xleftmargin=1.5em, %
+  formatcom = {\color{InputColor}\small}%
+}%
+\DefineVerbatimEnvironment{Soutput}{Verbatim}{framesep=2pt, %
+  %frame=lines,
+  xleftmargin=1.5em, %
+  formatcom = {\color{OutputColor}\small}%
+}%
+
+\begin{abstract}
+  
+  The \verb@Renext@ package has been specified by IRSN.  The main goal
+  is to implement the statistical framework known as "m\'ethode du
+  renouvellement".  This is similar to the Peaks Over Threshold (POT)
+  method but the distribution of the excesses over the threshold is
+  not restricted to GPD. Data Over Threshold can be completed by
+  historical data.  Some utility functions of the package are devoted
+  to event analysis or to graphical analysis.
+
+\end{abstract}
+
+\pagebreak
+%%\afterpage{\blankpage}
+
+\pagenumbering{arabic}  % 1, 2, 3, 4, ...
+\setcounter{page}{1}
+
+\SweaveInput{Chap_Intro.Rnw}
+\SweaveInput{Chap_DescriptiveTools.Rnw}
+\SweaveInput{Chap_Renouv.Rnw}
+
+\SweaveInput{Chap_POTBlocks.Rnw}
+\SweaveInput{Chap_Graphics.Rnw}
+\appendix
+
+\SweaveInput{ANN_Renouv.Rnw}
+\SweaveInput{ANN_Distributions.Rnw}
+
+
+%%\nocite*
+%% \bibliography{Renext}
+%%\bibliographystyle{jss}
+
+\bibliography{Renext}
+
+\printindex
+\end{document}

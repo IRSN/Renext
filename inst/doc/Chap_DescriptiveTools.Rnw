@@ -1,0 +1,495 @@
+
+\chapter{Descriptive  tools}
+%%============================
+\label{Chap-DescriptiveTools}
+
+Some functions of \pkg{Renext} have been designed to check the
+assumptions relative to the stationnarity of the events or to the
+distribution of the levels.  The analysis of the events can cope with
+gaps as are often met in practice. Although of less importance, the
+case where counts are used in place of events is also considered.
+
+\section{Functional plots}
+%%---------------------------
+\subsection{Principles}
+%%----------------------------
+\label{FUNCPLOTS}
+\index{Gumbel plot}\index{exponential plot}%
+Widespread graphical tools in statistics are \textit{functional
+  plots}, such as exponential plot, Weibull or Gumbel plots. In all
+cases, the plot is designed so that the theoretical distribution curve
+(exponential/Weibull/Gumbel) shows as a straight line. For instance
+the relations for distribution functions $F$
+\begin{align*}
+  -\log\left[1-F(x) \right] &= (x-\mu)/\sigma     \quad \textrm{(exponential)}\\
+  \qquad
+  -\log\left[-\log F(x) \right] &= (x-\mu)/\sigma \quad \textrm{(Gumbel)}
+\end{align*}
+both show a linear relation between $x$ and a transformed version
+$\phi(F)$ of~$F(x)$, e.g. $\phi(F)= -\log\left[1-F \right]$ for the
+exponential case.  The functional plots are obtained by plotting
+$[x,\,\phi(F)]$ still using the values of the probability $F$ to
+display the unevenly spaced graduations on the $y$-axis. The Weibull
+plot is similar but also uses a (log) transformation of~$x$.
+
+With a sample $X_i$ of size $n$ one uses non-parametric estimates
+$\widetilde{F}_i$ of the values $F(Z_{i})$ of the distribution
+function at the order statistics $Z_{i}$ with $Z_1> Z_2 > \dots >
+Z_n$. The~$n$ resulting points with ordinates $\widetilde{F}_{i}$ can
+be plotted with the transformed scale on the $y$-axis. A classical
+choice for the plotting positions is implemented in the \verb@ppoints@
+function of the \pkg{stats} package \index{plotting positions}%
+\begin{equation}
+  \label{eq:CUNNAME}
+  \widetilde{F}(Z_{n+1-i}) = \frac{i-a}{n -2a + 1},
+\end{equation}
+where $a$ is a parameter typically in the interval $[0,\,1]$.  The
+right hand side is the expectation of the random variable
+$F(Z_{n+1-i})$ for $a=0$ and an approximation of its median for
+$a=0.3$. 
+\index{ppoints function@{\texttt{ppoints} function}}
+
+As some other packages do, \textbf{Renext} provides exponential and
+Weibull plotting functions, namely \verb@expplot@ and \verb@weibplot@
+
+<<label=exppBrest, fig=TRUE, include=FALSE>>=
+expplot(x = Brest$OTdata$Surge, main = "expplot for \"Brest\"")
+@ 
+\vspace{-13pt}
+<<label=weibpBrest, fig=TRUE, include=FALSE>>=
+weibplot(x = Brest$OTdata$Surge-30, main = "weibplot for \"Brest\" (surge - 30)")
+@ 
+
+\noindent
+producing the two plots on figure~\ref{FUNG}.
+
+Note that the transformation $\phi(F)$ must not depend on unknown
+parameters. Therefore the Weibull plot produces a theoretical line
+only for the version with two parameters (shape and scale), and not
+for the three parameter one (with location).
+\begin{figure}
+   \centering
+   \begin{tabular}{c c} 
+     \includegraphics[width=7cm]{Rgraphics/fig-exppBrest.pdf} &
+     \includegraphics[width=7cm]{Rgraphics/fig-weibpBrest.pdf} 
+   \end{tabular}
+   \caption{\label{FUNG} Exponential and Weibull plot for the Brest
+     data. The variable \texttt{Surge} is used for the exponential
+     plot. The threshold $30$~cm is subtracted from \texttt{Surge} for
+     the Weibull plot. The later uses a log-scale for \texttt{x}.  }
+\end{figure}
+
+\subsection{Exponential vs Gumbel}
+%%---------------------------------
+
+While hydrologists often favour Gumbel plots, the exponential plot may
+also be used. The latter is better suited to the use of "OTdata"
+i.e. data where only values over a threshold~$u$ are kept. Even if
+the original observations $X_i$ are Gumbel, the conditional
+distribution $\Cond{X_i}{X_i>u}$ will be close to an exponential for
+$u$ large enough, see~\ref{GEVGPD}. This can be illustrated with a
+few simple R commands \label{GUMBEXP}
+
+<<label=ExpPlot, fig=TRUE, include=FALSE>>=
+library(evd); set.seed(136)
+X <- rgumbel(400); X <- X[X > 0.6]           ## X is truncated Gumbel
+n <- length(X); 
+Zrev <- sort(X); F <- (1:n) / (n + 1)           ## distribution function
+y.exp <- -log(1 - F); y.gum <- -log(-log(F))   
+plot(Zrev, y.exp, col = "red3", main = "exponential plot")
+@ 
+\vspace{-13pt}
+<<label=GumPlot, fig=TRUE, include=FALSE>>=
+plot(Zrev, y.gum, col = "SteelBlue3", main = "Gumbel plot")
+@ 
+
+\noindent
+The two plots are shown on figure~\ref{EXPGUM}. The difference
+between exponential and Gumbel plots is restricted to the small values.
+
+\begin{figure}
+   \centering
+   \begin{tabular}{c c} 
+     \includegraphics[width=7cm]{Rgraphics/fig-ExpPlot.pdf} &
+     \includegraphics[width=7cm]{Rgraphics/fig-GumPlot.pdf} 
+   \end{tabular}
+   \caption{\label{EXPGUM} Truncated or "thresholded" Gumbel random
+     sample.  Due to the truncation, the sample distribution is close
+     to an exponential.  The graduations for the $y$-axis are not in
+     probability-scale.}
+\end{figure}
+
+\section{Events and stationarity}
+%%===================================
+
+\subsection{Simple plots}
+%%---------------------------
+The simplest plot for checking stationarity has points $[T_i, \, X_i]$
+and can be obtained with R~functions of the \verb@graphics@
+package. The $T_i$ and $X_i$ will typically be available as two
+vectors of the same length or as two columns of a same data.frame
+object. For the example datasets of \textbf{Renext}, the $T_i$ and
+$X_i$ are given as two columns of the \verb@OTdata@ data frame
+
+<<label=spGaronne, fig=TRUE, include=FALSE, results=hide>>=
+plot(Flow ~ date, data = Garonne$OTdata, type = "h", main = "Flows > 2500 m3/s")
+@ 
+
+\noindent
+The graphic shows that several successive years had no exceedance
+over $2500~\textrm{m}^3/\textrm{s}$ during the second half of the
+1940-1950 decade. This could lead to further investigations using the
+\verb@subset@ function
+
+<<>>=
+subset(Garonne$OTdata, date >= as.POSIXct("1945-01-01") & date <= as.POSIXct("1950-01-01"))
+@ 
+
+\index{subset method@{\texttt{subset} method}}
+
+\noindent
+The graphics can be enhanced using the \verb@text@ function in the
+\verb@graphics@ package to annotate special events or periods.
+
+\begin{figure}
+   \centering
+   \begin{tabular}{c c} 
+     \includegraphics[width=7cm]{Rgraphics/fig-spGaronne.pdf} & 
+   \end{tabular}
+   \caption{\label{SpGar} Simple plot of events for the \texttt{Garonne} data.}
+\end{figure}
+
+\subsection{Uniformity}
+%-------------------------
+The \verb@gof.date@ function performs some tests to check the
+(conditional) uniformity of the events $T_i$ as implied by the HPP
+assumption. It is based on the fact that for a given interval of time
+$(s,\,t)$ the events $T_i$ falling in the interval are jointly
+distributed as are the order statistics of a sample of the uniform
+distribution on $(s,\,t)$. The sample size~$n$ is then
+random. Alternatively, the $n$ events falling in an interval
+$(T_k,\,T_{n+k+1})$ also have this joint conditional distribution. In
+both cases a Kolmogorov-Smirnov (KS) test is well suited to check the
+uniformity.
+\index{Kolmogorov-Smirnov test}
+
+The \verb@gof.date@ function mainly works with a \verb@POSIX@ object
+containing the events~$T_i$ as in
+
+<<label=gdGaronne, fig=TRUE, include=FALSE, results=hide>>=
+gof.date(date = Garonne$OTdata$date)
+@ 
+
+\noindent
+which produces the plot on the left of figure~\ref{KSEVT}. The
+empirical cumulative distribution function (ECDF) is compared to the
+uniform and the KS distance $D_n$ is shown as a vertical segment.
+The displayed KS $p$-value tells that uniformity should be rejected at
+the significance level of $0.1\%$. Though less clearly than above, the
+plot points out that the years 1940-1950 had fewer events.
+
+The \verb@gof.date@ function has optional args \verb@start@ and
+\verb@end@ to specify (and possibly restrict) the period on which the 
+test is performed.
+By default these are taken as the first and last event in \verb@date@
+and therefore only inner events are used in the ECDF.
+
+\subsection{Interevents}
+%-------------------------
+\index{interevent|(}% 
+An important property of the HPP concerns the interevents 
+$W_i = T_i-T_{i-1}$: the $W_i$ are independent and have exponential 
+distribution 
+\index{exponential distribution}%
+with rate~$\lambda$. Thus an exponentiality test might be performed
+to check the HPP assumption for observed data.
+
+The \verb@interevt@ function computes the interevents $W_i$ as numbers of days. The
+function returns a list with a \verb@interevt@ data.frame element containing
+the $W_i$ in the \verb@duration@ column which can be used to check exponentiality.
+This can be done either with a plot -~see figure~\ref{KSEVT} or 
+with the test of exponentiality  of the function \verb@gofExp.test@
+%%Since these are of class \verb@"difftime"@, they must be coerced 
+%%to numeric before using exponential plot or a test.
+
+<<label=ieGaronne, fig=TRUE, include=FALSE>>=
+ie <- interevt(date = Garonne$OTdata$date)
+names(ie)
+d <- ie$interevt$duration
+expplot(d, main = "Exponential plot for interevents")
+bt <- gofExp.test(d) 
+bt
+@ 
+
+\noindent
+It seems unlikely to obtain a good exponential fit
+as far as events occurrence shows seasonality as is the case here.
+A seasonality can no longer result from another distribution of 
+interevents --~that is from a non-Poisson stationary renewal process.
+Increasing the threshold might improve the adequacy with the 
+assumptions.
+
+\begin{figure}
+  \centering
+  \begin{tabular}{c c} 
+    \includegraphics[width=8cm]{Rgraphics/fig-gdGaronne.pdf} &
+    \includegraphics[width=8cm]{Rgraphics/fig-ieGaronne.pdf} 
+  \end{tabular}
+  \caption{\label{KSEVT} Analysis of the events for the
+    \texttt{Garonne} data set (OTdata).  Left panel: test for the
+    uniformity of events with the KS distance shown as a
+    vertical segment.  Right panel : exponential plot for the
+    interevents.}
+\end{figure}
+\index{interevent|)}
+
+\subsection{Missing periods or gaps}
+%%---------------------------------
+\index{missing periods!in interevents}% 
+In practice the situation is somewhat more
+complex due to the possible existence of missing (or skipped) periods
+where no events have been recorded.  Event rates should then be
+computed using \textit{effective duration} 
+\index{effective duration}%
+that is: the total duration of measurement \textit{ignoring missing
+  periods}.
+
+The functions \verb@gof.date@ and \verb@interevt@ can take this
+problem into consideration. The \verb@gof.date@ plot can display the
+missing periods or "gaps" provided that a suitable \verb@skip@ arg is
+given. For instance the following commands produce the plot on the
+left of figure \ref{gofBREST}
+
+<<label=gdBrest, fig=TRUE, include = FALSE>>=
+gof.Brest  <- gof.date(date = Brest$OTdata$date, skip = Brest$OTmissing,
+                       start = Brest$OTinfo$start, end = Brest$OTinfo$end)
+print(names(gof.Brest))
+@ 
+
+\noindent
+As their name may suggest, the returned list elements give the
+effective duration 
+\index{effective duration}%
+and the effective rate based on the true non-missing periods. The 
+\verb@noskip@ element contains detailed information about each non-skipped
+period
+
+<<>>=
+head(gof.Brest$noskip, n = 2)
+@ 
+
+\noindent
+For each period the rate has been computed as well as a KS test of
+uniformity.  The power of the test is obviously limited for periods
+containing only a few events.  \index{Kolmogorov-Smirnov test}
+
+The preceding call to \verb@gof.date@ corresponded to the default
+value of \verb@plot.type@, namely \verb@"skip"@. A drawback of the plot
+and KS test is that the comparison with the uniform is biased by the
+gaps.  The KS distance~$D_n$ between the empirical and theoretical
+distributions can be amplified by the gaps when there are too few
+events or, on the contrary, be reduced by gaps when there are too much
+events. These two phenomena can be seen by comparing the two plots of
+figure~\ref{gofBREST} although the two KS statistics and $p$-value are
+here nearly identical. The right panel plot was produced using the
+non-default choice for the \verb@plot.type@ arg i.e.  
+\verb@plot.type= "omit"@, missing periods can be omitted on the plot and in the KS
+test computation.
+
+<<label=gdBrest2, fig=TRUE, include = FALSE>>=
+gof.Brest2  <- gof.date(date = Brest$OTdata$date, 
+                        skip = Brest$OTmissing, plot.type = "omit",
+                        start = Brest$OTinfo$start, end = Brest$OTinfo$end)
+@ 
+
+\noindent
+The time axis now has \textit{unevenly} spaced ticks since it is
+obtained by concatenating the successive non-missing periods. More
+precisely, each retained time interval $k$ begins at the first event
+$T_{f_k}$ of a continuous observation period and ends at its last
+event $T_{\ell_k}$. Each of the vertical lines shows an
+interval $(T_{\ell_k},\,T_{f_{k+1}})$, which covers a missing period
+and is cut out as shown on figure~\ref{KSomit}.  The displayed
+information on the right panel of figure~\ref{gofBREST} concerns
+\verb@effKS.pvalue@ and \verb@effKS.statistic@ of an "effective" KS
+test performed on non-missing periods.  Provided that observation gaps
+occur independently from the events $T_i$, the interevents for couples
+of successive events falling in the same non-missing period can be
+used in a modified KS test. In the HPP case, these interevents should
+be independent and identically distributed with exponential
+distribution, thus concatenating them should produce an HPP hence an
+uniform conditional distribution of events.
+
+For the \verb@Brest@ example, the test tells us that the uniformity of
+events should be rejected while the plot indicates that there were
+more events during the XIXth century than during the XXth
+(the events have been shown on the left of figure~\ref{RENPLOTS}). Since
+large surges tend to occur more frequently in winter, further
+investigation of the gaps distribution would be useful. The
+\verb@OT2MAX@ function can help, see section~\ref{DiagGaps}
+page~\pageref{DiagGaps}. Since the interest in on high surge levels,
+we can select the events exceedances over the threshold $u:=50$~cm.
+\index{subset method@{\texttt{subset} method}}
+
+<<label=gdBrest3, fig=TRUE, include = FALSE>>=
+gof.Brest3 <- gof.date(date = subset(Brest$OTdata, Surge > 50)$date, 
+                       skip = Brest$OTmissing, plot.type = "omit",
+                       start = Brest$OTinfo$start, end = Brest$OTinfo$end)
+c(gof.Brest3$KS.pvalue,  gof.Brest3$effKS.pvalue)                     
+@ 
+
+\noindent
+The test now tells that the uniformity is accepted; the second $p$-value
+$\approx \Sexpr{round(gof.Brest3$effKS.pvalue, digits=2)}$
+is computed by omitting the gaps and is thus more reliable than the first.
+The plot is not shown.
+
+\index{OT2MAX function@{\texttt{OT2MAX} function}}
+
+
+\begin{figure}
+  \centering
+  \begin{tabular}{c c} 
+    \includegraphics[width=8cm]{Rgraphics/fig-gdBrest.pdf} &
+    \includegraphics[width=8cm]{Rgraphics/fig-gdBrest2.pdf} 
+  \end{tabular}
+  \caption{\label{gofBREST} Using the \texttt{plot.type} arg of
+    \texttt{gof.date} leads to the left panel (default value or
+    \texttt{"skip"}), or the right one (value \texttt{"omit"}).  Each
+    missing period appears as a grey rectangle on the left, and is
+    flattened as a line on the right. Though graphically unevenly
+    spaced, the tickmarks of time axis on the right show the beginning of 
+    years.  }
+\end{figure}
+
+\begin{figure}
+  \centering
+  \includegraphics[width=10cm]{images/KSomit.pdf}
+  \caption{\label{KSomit} With \texttt{plot.type = "omit"}, the plot
+    of \texttt{gof.date} only considers interevents for couples
+    falling in the same non-missing period and concatenates them. The
+    time interval $(T_{\ell_k},\,T_{f_{k+1}})$ between the last event
+    $T_{\ell_k}$ of the non-missing period $k$ and the first event
+    $T_{f_{k+1}}$ of the following non-missing period is "cut
+    out". The two events $T_{\ell_k}$ and $T_{f_{k+1}}$ collapse into
+    \textit{one} event of the new Point Process. Note that a
+    non-missing period with less than two events is cut out since it
+    contains no valid interevent.  }
+\end{figure}
+
+\section{Aggregated (counts) data}
+%%------------------------------------------
+\label{CountData}
+
+\subsection{Counts}
+
+The \verb@barplotRenouv@ function draws a barplot for counts data and
+performs a few tests adapted to this context where events are unknown,
+or when interevents can no longer be used.  The data used are $n$ counts $N_i$
+for $i=1$, $2$, $\dots$, $n$. These counts must be on \textit{disjoint
+  intervals} or "blocks" 
+\index{blocks}%
+with the \textit{same duration}, e.g.  one year. If events occur
+according to an HPP the $N_i$ form a sample of a Poisson
+distribution. The barplot compares the empirical (or observed)
+frequencies to their theoretical counterparts i.e. the
+expectations. The theoretical distribution is estimated using the
+sample mean as Poisson parameter (Poisson mean).
+
+The \verb@Brest.years@ object contains aggregated data for one-year blocks. 
+Some blocks are incomplete and are listed in \verb@Brest.years.missing@
+which can be used in \verb@barplotRenvouv@
+<<label = bp40, fig=TRUE, results=hide, include=FALSE>>=
+data(Brest.years); data(Brest.years.missing)
+bp40 <- barplotRenouv(data = Brest.years, threshold = 40,
+           na.block = Brest.years.missing, main = "threshold = 40 cm")
+@ 
+produces the graphic at the left of figure~\ref{BPS}. Increasing the threshold
+<<label=bp50, fig=TRUE, include=FALSE, results=hide>>=
+bp50 <- barplotRenouv(data = Brest.years, threshold = 50,
+           na.block = Brest.years.missing, main = "threshold = 50 cm")
+@ 
+we get a barplot for the smaller sample at the right of
+figure~\ref{BPS}.  Note that the function guesses that the first
+column represents a block indication which may not be true with other
+data. Therefore the normal use would specify the \verb@blockname@ and
+\verb@varname@ formal arguments of~\verb@barplotRenouv@.
+
+\begin{figure}
+  \centering
+  \begin{tabular}{c c} 
+     \includegraphics[width=8cm]{Rgraphics/fig-bp40.pdf} &
+     \includegraphics[width=8cm]{Rgraphics/fig-bp50.pdf} 
+\end{tabular}
+\caption{\label{BPS}The two barplots produced with
+  \texttt{barplotRenouv}. A bar height represents a number of blocks
+  (here years) with the number of events given in abscissa.}
+\end{figure}
+
+Great care is needed when the data contain missing periods since the 
+number of events is then biased downward.
+
+\subsection{Goodness-of -fit}
+%%-----------------------------
+\index{goodness-of-fit|(}
+A popular test for Poisson counts is called \textit{overdispersion test}.
+\index{overdispersion index, test}
+It is based on the fact that expectation and variance are equal in 
+a Poisson distribution. The test statistic is
+$$
+    I = (n-1)\,S^2/\bar{N}
+$$
+where $\bar{N}$ and $S^2$ are the sample mean and variance.  Under the
+null hypothesis $I$ is approximately distributed as $\chi^2(n-1)$. The
+statistic~$I$ tends to take large values when the observations~$N_i$
+come from an overdispersed distribution such as the negative
+binomial. A one-sided test can therefore be used for a negative
+binomial alternative.
+
+A Chi-square Goodness-of-fit 
+\index{chi-square goodness-of-fit test}%
+test is also available to check the goodness-of-fit of the $N_k$ to a
+Poisson distribution. In this test, the counts values $N_k$ are
+summarized in a tabular format retaining $m$~distinct values or group
+of adjacent values, together with the corresponding frequencies. The
+test statistic is
+$$
+   D^2 = \sum_{k=1}^m \left({O_k-E_k}\right)^2/E_k 
+$$
+where $O_k$ and $E_k$ are the observed and expected frequencies for
+the class $k$. For instance, the first class $k=1$ can be~$N=0$
+meaning that $O_1$ and $E_1$ are the number of intervals with no
+events recorded. Asymptotically (for large $n$)
+$$
+   D^2 \sim \chi^2(m-p-1)
+$$
+where $p$ is the number of parameters estimated from data, here $p=1$
+(for the mean of~$N$).  A one-sided test will reject the Poisson
+hypothesis when $D^2$ is too large\footnote{That is:
+  $D^2>\chi^2_\alpha$}.
+
+A classical drawback
+of this test is that classes with a small expected count~$E_i$ 
+should be grouped, in order to reach a minimal total of (say) $5$.
+<<>>=
+bp40$tests
+bp50$tests
+@ 
+
+\noindent
+For the dataset \verb@Brest.years@, using a threshold of $50$~cm leads to
+acceptable tests (at the $10\%$ level), while $40$~cm seems too small. 
+For the chi-square test, more details (e.g. grouping) are available. 
+
+<<>>=
+bp50$freq
+@ 
+
+\noindent
+The values of $N$ have been grouped in odrer to reach a minimal expected
+number of~$5$ for each group.
+
+Note that for a fairly high threshold, the statistic~$N$ will
+generally take only the two values $0$ and $1$. Then the chi-square
+test which requires at least three classes will not be available.
+\index{goodness-of-fit|)}

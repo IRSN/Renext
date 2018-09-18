@@ -1,0 +1,137 @@
+	
+	*******************************************
+	*    TODO LIST FOR THE Renext PACKAGE     *
+	*                                         *
+	*                                         *
+	*     Yves Deville                        *
+	*       	                          *
+	*******************************************
+
+
+			FOR VERSIONS > 3.0-0
+			
+	o Implement profile-likelihood inference for the return levels
+	of a Renouv object.
+
+	o Write a 'simulate' method for "Rendata" and "Renouv". In
+	both cases, a design similar to that of the object is used,
+	and new data is simulated using a 'distname.y' 'lambda' and
+	parameters for the distribution.
+
+	o Implement a 'design' function to extract the design part of 
+	a Rendata object, considered as deterministic: start/end of the 
+	OT sample, start/end of the OTS and MAX data, ... 
+
+
+			FOR VERSION 3.0-0 
+		
+	o REMOVE URLs THAT MAY CAUSE A BROKEN LINK in 'DESCRIPTION'
+	and .Rd files.
+
+	o 'expplot', 'weibplot': add a new argument 'a' and use 'pplot'?
+
+	o Check carefully the implication of the time zone in functions
+	using 'POSIXct' objects.
+			
+	o Document 'Dunkerque': source of data, REFMAR?
+
+	o Of course: update serioulsy 'Renext Guide'.					
+
+	o In 'fGEV.MAX' and 'fGPD' change the examples?
+
+	o Add a 'scaleData' argument in 'fWeibull' and 'fGamma'?
+
+	o Add some more tests in a place where they can be re-run
+	easily.
+
+
+			FOR VERSIONS > 2.0-12
+
+	o [DONE] Include functions 'Ren2gev', 'Ren2gumbel', 'gev2Ren',
+	'gumbel2Ren'?
+ 
+	o Add "ggplot" versions for the plot and lines methods.
+	
+	o [DONE] Write a 'simulate' method for the "Rendata"
+	class. This should have formal args such as "lambda",
+	"effDuration", "distname.y", as well as historical data
+	information.
+
+	o [DONE] Write a 'fGPD' function to estimate a GPD by ML. This
+	should be a wraper and be based on 'flomax' and 'fmaxlo'. The
+	information matrix would be obtained by transformation. A
+	special distribution would then be used under the name "GPD".
+	
+
+	              PISTES ENVISAGEES A LA VERSION 0.5.*
+	
+	o [DONE] Ecrire un NAMESPACE!
+
+	o [DONE] Proposer des classes (eventuellement S3 dans un
+	premier temps) pour contenir des donnees.
+
+	o [TRIED-FAILED] Définir des contraintes sur les parametres
+	pour certaines distributions et les utiliser dans
+	l'optimisation.
+
+	o [DONE] Normaliser les donnees dans fRenouv de maniere a
+	pouvoir travailler avec des donnees de nimporte quel ordre de
+	grandeur sans pb numerique pour les differences finies. Ne
+	sera possible que pour les lois connues de Renext, et non pas
+	pour une loi quelconque.
+
+	o [DONE] Jitterizer les donnees avant le test de KS pour
+ 	eviter le warning des ties.
+
+	o [PARTIALLY DONE] Ecrire des fonctions "aplot" 'ajouter au
+	graphique) pour les graphiques RLplot.
+
+	o [DONE] Dans 'fRenouv', autoriser le cas ou aucun parametre
+	n'est e estimer.  L'interet serait de calculer les predictions
+	(sans intervalle de confiance) tracer le graphique, etc.
+
+
+	              PISTES ENVISAGEES A LA VERSION 0.2.*
+	
+	o [DONE] Améliorer les controles et messages d'erreur dans
+	readXML: durée effective, etc.
+
+	o [DONE] Implémenter la prise en compte d'historique au sens
+	plus classique "pas d'observation dépassant x* entre deb et
+	fin"
+
+
+	              PISTES ENVISAGEES A LA VERSION 0.1.*
+	
+	o ML estimation. Pour la loi de Pareto généralisée GPD,
+	implémenter le maxixmum de vraisemblance avec une
+	vraisemblance concentrée (à un seul paramètre).  De cette
+	manière, l'estimation sera plus rapide et aussi plus fiable.
+
+	o Dates. A cause des leap seconds, les dates qui devraient
+	correspondre à des années entirèes semblent décalées. Le
+	premier janvier 00h00 apparaît comme le31 décembre après
+	23h. Une solution possible serait de conisdérer que les jours
+	commencent et finissent à 12h00. De cette manière, les "leap
+	seconds" ne généreront pas de changement de jour.
+
+	o Structure de données. Pour les données complexes dont le
+	format est décrit en XML, calculer et stocker les périodes
+	sans données manquantes telles qu'utilisées dans gof.dates.
+	
+	o Structure de données et test. Pour les données complexes
+	avec indication de date d'événement, calculer la durée des
+	interarrivées (en fraction d'année) et proposer un test de
+	Bartlett pour l'exponentialité dans gof.dates. FAIT DANS
+	VERSION 0.2
+
+	o Implémenter le test du chi2 d'adéquation pour la loi de
+	Poisson et la loi binomiale sur les comptages. Ces test
+	peuvent être implémentés dans une seule fonction gof.
+
+	o Implémenter les tests d'adéquation correspondant aux lois
+ 	des dépassements.  Ces tests peuvent être groupés dans une
+ 	fonction gof.y. Pour le cas exponentiel, on prendra un test de
+ 	Bartlett, pour la loi de Weibull, un test de Mann peut être
+ 	utile. KOLMOGORV-SMIRNOV FAIT DANS VERSION 0.2
+		

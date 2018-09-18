@@ -1,0 +1,1257 @@
+\chapter{\texttt{Renouv} objects}
+%%=================================
+
+\label{Chap-Renouv}
+  
+Fitted POT models are in \pkg{Renext} considered as objects of a
+\verb@"Renouv"@ S3 class, and can be used with methods \verb@coef@,
+\verb@vcov@, \verb@plot@, \verb@predict@, $\dots$ Such models are
+usually created by a ML estimation using the creator function
+\verb@Renouv@. This function can carry out the usual estimation from
+observations $X_i$ of the marked process. It can also cope with
+heterogeneous data including blocks such as \verb@MAXdata@ or
+\verb@OTSdata@ described in previous chapters, e.g. to use historical
+information. In some rare cases, a \verb@Renouv@ object can also be
+created with \verb@RenouvNoEst@ if all coefficients are known.
+
+\index{Renouv class@{\texttt{Renouv} class}|(}
+
+%%\section{First example: high tide surge heights at Brest}
+%%================================================================
+  
+\section{Fitting POT for La Garonne}
+%%========================================
+\label{FitGaronne}
+\index{Garonne data@{\texttt{Garonne} data}|(}
+For the dataset \verb@Garonne@, the OT data contain flow values over
+the threshold $u_\star = 2500~\textrm{m}^3/\textrm{s}$. We can fit a POT
+model with any threshold $u \geqslant 2500$. As in~\citet{MIQUELBOOK}
+we fit an exponential and a two-parameter Weibull distribution using
+OT data only.  The \verb@Renouv@ function needs on input the \textit{levels}
+given in a vector \verb@x@, the \textit{effective duration} \verb@effDuration@
+--~normally in years~-- and the \textit{threshold}
+
+\index{exponential distribution}
+<<label=feGaronne, fig=TRUE, include=FALSE>>=
+fit.exp <- Renouv(x = Garonne$OTdata$Flow, effDuration = 65, threshold = 3000,
+                  distname.y = "exponential", main = "exponential")
+class(fit.exp)
+@ 
+
+\noindent
+The result is an object with (S3) class \verb@"Renouv"@. A few S3 
+methods are available for this class:
+
+<<>>=
+methods(class = "Renouv")
+@ 
+
+\noindent
+The method \verb@coef@ extracts the vector of estimated coefficients
+<<>>=
+coef(fit.exp)
+@ 
+
+\noindent
+The first element named \verb@"lambda"@
+is the event rate expressed in \textit{events by year}. The other elements are the ML
+estimates of the distribution for excesses, with names
+corresponding to the probability functions --~here one name
+\verb@"rate"@ for the exponential distribution parameter.
+The ubiquitous
+\verb@plot@ method can be used to re-draw a return level plot 
+from the fitted object. The \verb@summary@ method can be used to display the results.
+The \verb@predict@ method can be used to compute
+return levels corresponding to given return periods as illustrated later.
+\index{return level!in POT}
+\index{predict method@{\texttt{predict} method}}
+
+
+A \verb@Renouv@ object is mainly a list within which the
+\verb@estimate@ element gives the maximum likelihood estimates
+returned by \verb@coef@. Many other results are returned.
+
+<<label=namefitexp>>=
+head(names(fit.exp), n = 24)
+@
+
+\noindent
+This shows the $24$ first elements in the list. The \verb@sigma@ element gives the
+vector of standard deviations for the estimates.
+
+The \verb@distname.y@ formal in \verb@Renouv@ 
+is used to change the distribution for the excesses~$Y_i=X_i-u$.
+<<label=fwGaronne, fig=TRUE, include=FALSE>>=
+fit.weibull <- Renouv(x = Garonne$OTdata$Flow, effDuration = 65, threshold = 3000,
+                      distname.y = "weibull", main = "Weibull")
+coef(fit.weibull)
+fit.weibull$sigma
+@ 
+\index{Weibull distribution}
+
+\noindent
+The estimated parameters of the Weibull distribution and their
+\index{Weibull distribution} standard deviation (list item
+\verb@sigma@) show that the shape is close to~$1.0$, which corresponds
+to the exponential distribution. The two fits produced return level
+plots shown on figure~\ref{RLP1}.
+
+
+\begin{figure}
+   \centering
+   \begin{tabular}{c c} 
+     \includegraphics[width=8cm]{Rgraphics/fig-feGaronne.pdf} &
+     \includegraphics[width=8cm]{Rgraphics/fig-fwGaronne.pdf} 
+   \end{tabular}
+   \caption{\label{RLP1}Return level plots for the example 
+     \texttt{Garonne} with two distributions
+     for the excesses.}
+\end{figure}
+
+
+\section{Return level plot}
+%%============================
+\subsection{Description} 
+%%----------------------
+\index{return level!plot|(} 
+\index{Gumbel plot}% 
+\textbf{Renext} uses a
+return level plot which may be qualified as \textit{exponential}, and
+differs from the usual one which uses \textit{Gumbel} scales.  The
+main difference is that the exponential plot uses a log scale for
+return periods while the Gumbel plot uses a log-log scale.  In both
+cases, the theoretical return level curve (exponential/Gumbel) shows
+as a straight line.
+
+The difference between the two plots is restricted to the small
+levels/return periods, since the exponential and Gumbel distribution
+functions are close for large values.  As it was advocated in the
+discussion about functional plots page~\pageref{FUNCPLOTS}, the
+exponential return level plot is better suited to the use of "OTdata"
+i.e. data where only values over a threshold are kept, even if
+the the original observations $X_i$ are Gumbel see~\ref{GEVGPD}.
+
+The return level plot is similar to the classical exponential plot of
+the previous chapter, \index{exponential plot}%
+\textit{but with the two axes $x$, $y$ exchanged}. A concave
+(downward) RL plot indicates a distribution with a tail "lighter than
+the exponential" or even with finite end-point such as GPD with
+$\xi<0$.
+
+The displayed confidence limits are in all cases pointwise and
+bilateral, and correspond to the confidence percents displayed which
+can be changed in the call. In most cases the confidence limits are
+approximate and obtained by using the \textit{delta method} briefly 
+described later. 
+\index{delta method}%
+For some special cases with exponential distribution an exact
+inference is possible and used. The \verb@infer.method@ element in the
+list returned by \verb@Renouv@ provides information about this.
+
+\subsection{Plot method for \texttt{Renouv} objects} 
+%%-----------------------------------------------
+\label{plot.Renouv}
+Once created with the \verb@Renouv@ function, an object of class
+\verb@"Renouv"@ can be used to (re)draw a return level plot and change
+some options. Useful changes concern the main title using the
+\verb@main@ argument, or axes labels \verb@xlab@, \verb@ylab@.  Axis
+limits can also be set.  For the return levels, this is done using the
+usual \verb@ylim@ argument.  For the return periods, the limits are
+set using \verb@Tlim@ or \verb@problim@.  The first possibility works
+with a vector containing two return periods (in years); the second
+possibility requires a vector with two probabilities.
+
+\index{axes limits in return level plot}
+
+The two following code chunks produce the return level plots shown on
+figure~\ref{RLP2}.  On left panel, we change the return periods axis
+limits.
+
+<<label=rlGaronneOpt1, fig=TRUE, include=FALSE>>=
+plot(fit.weibull,  Tlim = c(1, 100), main = "return periods from 0 to 100 years")
+@ 
+
+\noindent
+On the right panel we change both axes and the confidence level.
+
+<<label=rlGaronneOpt2, fig=TRUE, include=FALSE>>=
+plot(fit.weibull, Tlim = c(1, 100), ylim = c(3000, 10000), pct.conf = 95,
+     main = "return levels and 95% limits")
+@ 
+
+\index{confidence limits!level choice}
+\noindent
+The chosen percentage for the confidence limits \verb@pct.conf = 95@
+must correspond to a value available in the object description.
+Otherwise, it is necessary to force a new prediction by passing a
+suitable \verb@pct.conf@ argument along with \verb@predict = TRUE@ in
+the call to the \verb@plot@ method.  The shown elements of the
+\verb@Renouv@ object can be selected, see
+chapter~\ref{Chap-RenextGraphics} p.~\pageref{Chap-RenextGraphics} for
+more details.
+
+\begin{figure}
+   \centering
+   \begin{tabular}{c c} 
+     \includegraphics[width=8cm]{Rgraphics/fig-rlGaronneOpt1.pdf} &
+     \includegraphics[width=8cm]{Rgraphics/fig-rlGaronneOpt2.pdf} 
+   \end{tabular}
+   \caption{\label{RLP2}Changing the settings of the return level plot. 
+     Left and right: the limits of the $x$-axis are set using \texttt{Ylim}. 
+     Right: \texttt{ylim} and \texttt{pdc.conf} are used and only the 
+     specified $0.95$ confidence level is shown.}
+\end{figure}
+
+\index{plotting positions|(} 
+
+When only OT data are used as here, the default plotting positions use
+a return period at the order statistics $Z_1 > Z_2 > \dots > Z_n$ estimated by $1 /
+\widehat{T}(Z_i) = \widehat{\lambda} \,\widetilde{S}(Z_i)$, where
+$\widehat{\lambda}$ is the natural estimate of the rate (see below)
+and $\widetilde{S}(Z_i) = 1 - \widetilde{F}(Z_i) = i / (n +1)$. 
+Alternatively, the \verb@ppoints@ formula~(\ref{eq:CUNNAME}) for $a \neq 0$ or Nelson's 
+formula \citep{Nelson} can be specified with \verb@plotOptions@ passed
+to the \verb@SandT@ function. The difference between the different choices
+can be important for the largest order statistics (i.e. for small $i$).
+
+\index{return level!plot|)}
+\index{plotting positions|)} 
+
+%% “Most are transformations of one another so that choice is partly
+%% a matter of taste.”
+
+
+\section{Computational details}
+%%==================================
+\subsection{Maximum Likelihood theory}
+%%--------------------------------
+\index{maximum likelihood|(} 
+Estimation and inference in \textbf{Renext} mainly
+rely on the Maximum Likelihood (ML) theory. A relevant presentation can be found
+in \citet[chap.~2]{COLES} or in the \textit{Further reading}
+references given there.
+
+The standard application context of ML is when an ordinary sample i.e. 
+$n$ independent random variables $X_i$ with the same distribution depending 
+of an unknown vector $\bs{\theta}_X$ with density $f_X(x;\bs{\theta}_X)$. 
+The likelihood function~$L$ is the joint density of the sample i.e.
+$$
+   L = \prod_{i=1}^n f_X(X_i;\,\bs{\theta}_X)
+$$
+and the estimator $\widehat{\bs{\theta}}_X$ is the value of~$\bs{\theta}_X$ 
+maximising~$L$.
+In some special cases the maximisation of~$L$ can have an explicit solution,
+but a numerical optimisation will generally be required. The ML theory
+warrants\footnote{Under suitable \textit{regularity conditions}.} the
+\textit{asymptotic unbiasedness} and \textit{asymptotic normality}: 
+when $n$ is large $\widehat{\bs{\theta}}_X$ has its expectation approximately 
+equal to the true unknown $\bs{\theta}_X$, and it is approximately normally distributed.    
+
+The ML theory applies to more general situations where observations are
+no longer independent or can have different marginal distributions. This 
+occurs when order statistics are used in the estimation, e.g. with 
+historical data.
+\index{historical data}%
+
+The general principle of the \verb@Renouv@ function is to allow a large choice
+of distributions, yet trying to take advantage of the specific distribution/independence 
+when possible. In most cases the maximisation of the likelihood is obtained using 
+\verb@optim@ function of the \verb@stats@ package. When historical data are used
+they are considered as a complement to the ordinary data (excesses) 
+and two optimisations might be used. 
+\index{optim function@{\texttt{optim} function}}
+\index{maximum likelihood|)}
+
+\subsection{Estimation and inference}
+%%--------------------------------
+The model uses a parameter vector $\bs{\theta} =
+[\lambda,\,\bs{\theta}_X^\top ]^\top$ of length~$p$ formed with the
+HPP rate~$\lambda$ and the parameter vector $\bs{\theta}_X$ for the
+levels distribution.
+
+\textit{When only OT data are used}, the observed data consist in $N$ events 
+$[T_i,\,X_i]$ on a given period. Since events $T_i$
+and levels~$X_i$ are independent the likelihood is
+$$
+   L_{\texttt{OT}} = 
+   \underset{\mathrm{events}}{\underbrace{\frac{(\lambda w)^N}{N!} e^{-\lambda w}}}
+   \times 
+   \underset{\mathrm{levels}}{\underbrace{\prod_{i=1}^N f_X(X_i;\,\bs{\theta}_X)}}
+$$
+where $w$ is the time-length (i.e. the effective duration), and the log-likelihood is
+\begin{equation}
+  \label{eq:LLstand}
+  \log L_{\texttt{OT}}  = N\log(\lambda w) - \lambda w 
+    - \log(N!)+ \sum_{i=1}^N \log f_X(X_i;\,\bs{\theta}_X). 
+\end{equation}
+The ML estimation consists in two simple ML estimations: one for the events 
+(rate estimation) and the other for levels. The ML estimate of the unknown rate $\lambda$ is
+$$
+     \widehat{\lambda} = \frac{N}{w}= \frac{\textrm{number of events}}{\textrm{duration}},
+$$
+its variance is $\Var[\widehat{\lambda}]= \lambda/w \approx
+\widehat{\lambda}/w$.  Note that the number of events $N$ is a
+\textit{sufficient statistic} for $\lambda$: the events $T_i$ are not
+used and the whole information they provide about~$\lambda$ is
+contained in~$N$.  The "$X$-part" of ML concerns an ordinary
+sample. The ML estimate $\widehat{\bs{\theta}}_X$ is available in
+closed form in some cases (e.g. exponential) or can be computed by
+using a specific method (e.g.  GPD, Weibull, gamma), see
+\citet{RenCompDet}.
+
+\textit{When only OT data are used}, it can be said that $\lambda$ and
+$\bs{\theta}_X$ are orthogonal parameters.  This is no longer true
+when block data (e.g. historical data) are also used: the likelihood
+then takes a slightly more complex form given below.
+\index{orthogonal parameters}
+
+In a few cases with only OT data and favourable distribution
+(e.g. Weibull), it is possible to use the \textit{expected}
+information matrix. But the general treatment in \textbf{Renext} is
+based on the \textit{observed} information and the numerical
+derivatives. More precisely, the information matrix is obtained as the
+\index{hessian}%
+\index{information matrix!observed}%
+numerical hessian at convergence. The hessian can either be the
+element \verb@hessian@ returned by the \verb@optim@ function, or
+result from the use of the \verb@hessian@ function from
+the \verb@numDeriv@ package: see the manual for more details.
+
+
+\subsection{Delta method}
+%%--------------------------
+\index{inference!delta method}
+The \textit{delta method}
+\index{delta method}% 
+can be used to infer about a  function\footnote{Smooth enough.}
+$\psi = \psi(\bs{\theta})$ of the parameter $\bs{\theta}$. For instance 
+$\psi(\bs{\theta})$ can be the return period of a given level~$x$
+%%, which depends on $\lambda$ and $\bs{\theta}_X$
+(see~\ref{eq:RETPER}).  The transformed parameter estimate is
+$\widehat{\psi} = \psi(\widehat{\bs{\theta}})$.  As a general result
+in the ML framework, the transformed parameter estimate is
+asymptotically unbiased $ \Esp[\widehat{\psi}] \approx
+\psi(\bs{\theta}) $ and asymptotically normal with variance
+$$
+     \Var[\widehat{\psi}] \approx 
+     \bs{\delta}^\top \,\Var[\widehat{\bs{\theta}}]\,\bs{\delta}     
+$$
+where $\bs{\delta}$ is the gradient vector 
+$$
+  \bs{\delta} = \frac{\partial \psi}{\partial \bs{\theta}} =  
+  \left[\frac{\partial \psi}{\partial \theta_1}, \,
+        \frac{\partial \psi}{\partial \theta_2}, \, \dots, \, 
+      \frac{\partial \psi}{\partial \theta_p}\right]^\top
+$$
+evaluated at $\widehat{\bs{\theta}}$, see~\citet[chap. 2]{COLES}. 
+
+\pkg{Renext} uses this approach\footnote{In the \texttt{predict} method for 
+\texttt{Renouv} objects.}
+with $\psi$ taken as the level (or
+quantile)~$x(T)$ corresponding to a given return period~$T$, given by
+(\ref{eq:RETLEV}) in section~\ref{RETPERLEV}. Using chain rule, the
+derivative with respect to the rate $\lambda$ is
+\begin{equation*}
+  \frac{\partial}{\partial \lambda} x(T) = \frac{1}{\lambda^2 T f_X}
+\end{equation*}
+where the density $f_X$ is evaluated at $x(T)$. In practice, the
+uncertainty on $\lambda$ has a minor impact for large return periods
+and can optionally be ignored in the computations. The
+gradient of the quantile function with respect to $\bs{\theta}_X$ is
+computed numerically using a finite difference approximation.
+
+
+\subsection{Goodness-of-fit}
+%%------------------------
+\index{goodness-of-fit|(}
+As a general tool to assess the fit, the Kolmogorov-Smirnov (KS) test
+is computed in all cases. 
+
+\index{Kolmogorov-Smirnov test}
+The KS test normally requires a \textit{completely specified} distribution 
+for the null hypothesis while the \textit{fitted} distribution is used here 
+--~thus generating a bias. In some special cases (normal, exponential) the bias 
+could be corrected using an adaptation depending on the distribution as in
+Lilliefors test for the normal. However since the number of estimated parameters 
+is small (usually $1$ or $2$ for the "excesses part") the bias will be small 
+provided that the number of exceedances is large enough, say $50$ or more. 
+
+For some distributions such as exponential a specific test may be
+available.  In the current version distribution-specific tests are in
+\verb@Renouv@ limited to Bartlett's test of exponentiality.
+
+Rounded measurements often lead to ties in the sample, which
+\index{ties} \index{jitter} 
+would without precaution generate a warning in the KS test.
+This can be avoided by "jitterising" i.e. adding a small random noise
+to the observed values.
+
+The  graphical analysis of the fit using the return level plot is generally 
+instructive. For  exponential or Weibull excesses, classical exponential or
+Weibull plot can also be drawn using the~\verb@expplot@ and~\verb@weibplot@ functions. 
+\index{Weibull plot}%
+\index{exponential plot}
+
+When block data (e.g. historical data) are given, they are used during
+the estimation but not included in the empirical distribution in the
+KS test. In this case, the interpretation of the test needs further
+investigations.  \index{goodness-of-fit|)}
+
+% On an exponential plot
+% $$
+%    - \log \left[1 - F(y) \right] 
+% $$
+
+
+\section{Using heterogeneous data}
+%%---------------------------------
+\label{SECHISTORY}
+\index{heterogeneous data|(}
+\index{historical data|(}
+\index{block data|(}
+
+\subsection{Two types of block data}
+%%-----------------------------------------
+\label{TwoTypes}
+Beside OT data, \verb@Renouv@ and other \pkg{Renext} functions can use
+two other sorts of data: MAX data which are $r$ largest, and OTS data
+for ``Over Threshold Supplementary'' data\footnote{Or Over
+  ThresholdS.}.  In both cases, the data are structured in blocks and
+can be used only as complement to the main OT data.
+%% which must continue to be provided.
+
+\begin{description}
+  
+\item[MAX data] contain $r$~largest blocks. Each block corresponds to
+  a time interval of known duration $w$ during which the $r$ largest
+  values are available. Blocks are assumed to be mutually disjoint and
+  disjoint from the OT period. Neither the duration of blocks nor the
+  number $r$ of observations are assumed to be constant; hence each
+  block~$b$ has a specified duration $w_b$ and a number $r_b$ of
+  largest values.
+
+%%so the  
+%%observations random vectors for blocks and over the OT period
+%%are mutually independent.
+
+\item [OTS data] contain Over Threshold blocks with known duration, 
+  exceedances and levels (or excesses). Again, blocks are assumed to be mutually
+  disjoint and disjoint from the OT period and other 
+  blocks. For each such block $b$ with known duration $w_b$, we must
+  have a threshold $u_b$ and all observations with levels exceeding
+  $u_b$. The number $r_b$ of such observations may be zero, in which
+  case we may say that $u_b$ is an \textit{unobserved level}. The
+  threshold~$u_b$ can not be smaller than the main threshold.
+
+  \index{threshold!perception}
+
+\end{description}
+\index{unobserved level}
+
+In the context of historical information, the threshold $u_b$ of an
+OTS block can be called a \textit{perception} threshold.  Unobserved
+levels (empty OTS blocks) occur when it is granted, or at least
+believed, that $u_b$ was never exceeded during a period of time. For
+instance it can be granted that a river never flooded over a given
+benchmark level during the last five centuries, or that the arch of a
+bridge was never reached since its construction. Such information has
+obviously a great potential impact on the estimation since it
+typically concerns very long periods, much longer than the observation
+period. Note that the unobserved level can concern missing periods for
+OT data: although no data are available we may still know that no very
+high level occurred, see figure~\ref{UNOBSERVED}.
+  
+\begin{figure}
+  \centering
+  \includegraphics[width=14cm]{images/unobserved.pdf}
+  \caption{\label{UNOBSERVED} An unobserved level can provide
+    information on an historical period (left) or on missing periods
+    (right). In the second case, one would use a virtual block with
+    its duration $w_1$ set to the sum of all gaps lengths.}
+\end{figure}
+
+
+\subsection{Likelihood}
+%%--------------------
+
+\subsubsection{Global likelihood}
+%% ------------------
+In the general setting of heterogeneous data described above, the log-likelihood
+takes the form
+$$
+\log L = \log L_{\texttt{OT}} + \log L_{\texttt{MAX}} + \log L_{\texttt{OTS}}, 
+$$
+because the OT period and MAX or OTS blocks are assumed to correspond
+to disjoint time intervals and hence to independent observations. Similarly
+the log-likelihood for MAX or OTS data are sums of contributions arising from independent 
+blocks, so
+$$
+\log L =  \log L_{\texttt{OT}} + 
+\sum_{b \in \{\texttt{MAX blocks}\} } \log L_b + \sum_{b \in \{\texttt{OTS blocks}\}} 
+\log L_b.
+$$ 
+The log-likelihood for a MAX or OTS block is given below.
+
+\subsubsection{MAX data}
+%%------------------
+\index{MAXdata@{\texttt{MAXdata}}|(}%
+Consider a MAX block $b$ with duration $w_{b}$. 
+Let $Z_{b,1} \geqslant Z_{b,2} \geqslant \dots \geqslant Z_{b,r_b}$ 
+be the~$r_b$ largest observations. The log-likelihood for the block can be proved to be 
+\index{rlargest@{$r$~largest}}
+\begin{equation}
+  \label{eq:LLH1}
+  \log L_b  = r_b  \log(\lambda w_{b}) + \sum_{i=1}^{r_b} \log f_X(Z_{b,i};\,\bs{\theta}_X)  
+  -\lambda w_{b} \, S_X(Z_{b,r};\,\bs{\theta}_X)
+\end{equation}
+up to an unimportant additive constant.
+
+%% When several blocks exist, they provide independent random vectors 
+%% of observations with possibly different~$r_b$ and the log-likelihood
+%% is obtained by summing over blocks.
+\index{MAXdata@{\texttt{MAXdata}}|)}%
+
+\subsubsection{OTS data}
+%%------------------
+\label{LOTSdata}
+\index{OTSdata@{\texttt{OTSdata}}|(}%
+The likelihood for an OTS block with threshold $u_{b}$ is simpler
+to derive. According to the POT assumptions\footnote{See section~\ref{ASSUMPTIONS}
+page~\pageref{ASSUMPTIONS}.}, 
+the levels greater than $u_{b}$ occur
+according to an HPP \textit{thinning} the 
+original HPP%
+\index{thinning (Poisson Process)}. 
+This thinned process has rate $\lambda S_X(u_{b})$ because at
+each OT event, the level~$u_{b}$ can be exceeded with
+probability~$S_X(u_{b})$. Let $w_{b}$ be as before the block duration,
+and let $Z_{b,1} \geqslant Z_{b,2} \geqslant \dots \geqslant
+Z_{b,r_b}$ be the~$r_b$ observations, with possibly $r_b=0$. Up to an
+additive constant, the log-likelihood is
+\begin{equation}
+  \label{eq:LLH_OTS}
+  \log L_b  = r_b  \log(\lambda w_{b}) 
+    + \sum_{i=1}^{r_b} \log f_X(Z_{b,i};\,\bs{\theta}_X)  
+  -\lambda w_{b} \,S_X(u_{b};\,\bs{\theta}_X).
+\end{equation}
+This expression is identical to~(\ref{eq:LLH1}) with the block
+threshold $u_{b}$ replacing the minimum observed value~$Z_{b,r_b}$.
+
+When an OTS block~$b$ contains no observation i.e. when $r_b=0$,
+the log-likelihood~(\ref{eq:LLH_OTS}) is simply
+\begin{equation}
+  \label{eq:LLH2}
+     \log L_b =  - \lambda w_{b} \, S_X(u_{b};\,\bs{\theta}_X).
+\end{equation}
+This is easily checked: on a period of length $w_{b}$, the
+number of levels $>u_{b}$ is Poisson with mean $\mu :=
+S_X(u_{b}) \times \lambda w_{b}$.  Hence the probability to observe no
+level~$>u_{b}$ is: $ e^{-\mu} \mu^0/0!= e^{-\mu}$.  
+
+\index{OTSdata@{\texttt{OTSdata}}|)}%
+
+
+\subsubsection{Remarks}
+%%------------------
+Assume that we have OT data, and consider the impact of using
+one extra block. Some special cases arise.
+
+\begin{enumerate}
+\item When only one OTS block with no observation and with
+  $u_{b}$ equal to the main threshold, its contribution to the global
+  log-likelihood is $-\lambda w_{b}$ since then $S_X(u_{b})=1$
+  in~\ref{eq:LLH2}).  Up to an unimportant constant, the resulting
+  global log-likelihood is identical to the one which would result from
+  simply adding~$w_{b}$ to the effective duration $w$ of the main OT sample
+  in (\ref{eq:LLstand}).
+  
+\item Assume that we have only one historical MAX block which only
+  contains the maximum $Z_{b,1}$ i.e. has $r_b=1$.  The contribution
+  of the block to the log-likelihood~(\ref{eq:LLH1}) is
+  $$
+  \log L_b = \log(\lambda w_{b}) + \log f_X(Z_{b,1};\,\bs{\theta}_X)
+  -\lambda w_{b} \, S_X(Z_{b,1};\,\bs{\theta}_X).
+  $$
+  At the right hand side, the third term is identical to~(\ref{eq:LLH2})
+  with an unobserved level $u_{b}=Z_{b,1}$ and a period length
+  $w_{b}$. The sum of the two first terms at right hand side is the extra
+  contribution that would be added to the log-likelihood of the OT data
+  if a new OT observation with level~$Z_{b,1}$ had been added without
+  changing the main OT period duration. Therefore, the same
+  likelihood/results are obtained in the two following approaches.
+  \begin{list}{$\bullet$}{ \setlength{\itemsep}{2pt}
+      \setlength{\topsep}{2pt} }
+  \item Specify an historical MAX block of length $w_{b}$ with $r_b=1$
+    and level $Z_{b,1}$.
+  \item Join the observed maximum~$Z_{b,1}$ to the OT levels $X_i$, and
+    specify that the level $u_{b}:=Z_{b,1}$ was never reached during a
+    OTS block of length $w_{b}$.
+  
+  \end{list}
+  The second approach might seem natural to practitioners.
+  
+\end{enumerate}
+
+\subsubsection*{Likelihood maximisation}
+%%------------------
+\index{constraint!inequality in MLE}
+\index{optim function@{\texttt{optim} function}}
+When heterogeneous data are used, the ML estimators of $\lambda$ and
+~$\bs{\theta}_X$ are found by numerically maximising the log-likelihood.
+It can be shown that this likelihood function can be concentrated with
+respect to the rate $\lambda$, thus 
+\index{concentration, likelihood}
+leading to the maximisation of a function $\log
+L_{\textrm{c}}(\bs{\theta}_X)$ depending on~$\bs{\theta}_X$ only,
+see~\citet{RenCompDet}. 
+
+The numerical maximisation relies on the~\verb@optim@ function. Like
+most EV packages do, \pkg{Renext} uses an unconstrained optimisation,
+while most distributions would normally require the use of inequality
+constraints. For instance with GPD excesses, constraints should be
+imposed because the maximal likelihood is otherwise infinite,
+see~\ref{GPDdist}. In practice, this is not really a concern because
+the log-likelihood will take the value \verb@NA@ or \verb@NaN@ rather
+than a large value near the boundary of the parameter domain, and
+\verb@optim@ copes quite well with a \verb@NA@ value of the objective.
+
+By default, the initial values for the estimation with heterogeneous
+data are obtained as the ML estimates based on the OT data only. The
+reason is that MAX or OTS data were regarded as complementary
+data in the initial conception of \pkg{Renext}. Moreover, the ML
+estimation based on OT data is simplified for most of the
+distributions used in practice.
+
+
+\index{initial values}
+
+
+\subsection{Example: using Garonne historical MAX data}
+%%-------------------------------------  
+As seen in chapter~\ref{Chap-Intro}, the \verb@Garonne@ dataset
+contains historical data of type MAX, which can be used in the
+estimation. The data are described in the section~\ref{HistoricalData}
+page~\pageref{HistoricalData}.  The historical part corresponds here
+to one block, and the following levels
+
+<<label=feGaronneH, fig=TRUE, include=FALSE>>=
+Garonne$MAXdata$Flow
+@ 
+
+\noindent
+The duration is given in \verb@Garonne$MAXinfo$duration@
+with value \Sexpr{Garonne$MAXinfo$duration}~years.
+
+As a general rule, the MAX or OTS data must in \verb@Renouv@ be passed
+as a \textit{list} of numeric vectors, each vector corresponding to
+one block. The (effective) durations are given as a numeric vector
+with the \textit{same length as the list}. For the MAX case, the
+formal arguments to use are \verb@MAX.data@ (list) and
+\verb@MAX.effDuration@ (numeric vector).
+
+Since the data corresponds here to one block, the list \verb@MAX.data@
+contains only one vector and the vector \verb@MAX.effDuration@
+is of length one. The two following fits produce the return level plots shown 
+in figure~\ref{FIGHIST}.
+
+<<label=feGaronneH, fig=TRUE, include=FALSE>>=
+fit.exp.H <- Renouv(x = Garonne$OTdata$Flow,
+                    effDuration = 65, threshold = 3000,
+                    MAX.data = list(Garonne$MAXdata$Flow),
+                    MAX.effDuration = Garonne$MAXinfo$duration,
+                    distname.y = "exponential",
+                    main = "Garonne data, \"exponential\" with MAXdata")
+@ 
+
+<<label=fwGaronneH, fig = TRUE, include=FALSE>>=
+fit.weib.H <- Renouv(x = Garonne$OTdata$Flow,
+                     effDuration = 65, threshold = 3000,
+                     MAX.data = list(Garonne$MAXdata$Flow),
+                     MAX.effDuration = Garonne$MAXinfo$duration,
+                     distname.y = "weibull",
+                     main = "Garonne data, \"Weibull\" with MAXdata")
+@ 
+
+\noindent
+The exponential fit is only slightly modified by the use of historical data. 
+As said before, the parameter $\lambda$ and $\bs{\theta}_X$ are no longer
+orthogonal when historical data are used
+
+<<label=nonorth>>=
+fit.exp.H$corr
+@ 
+
+
+\begin{figure}
+   \centering
+   \begin{tabular}{c c} 
+     \includegraphics[width=8cm]{Rgraphics/fig-feGaronneH.pdf} &
+     \includegraphics[width=8cm]{Rgraphics/fig-fwGaronneH.pdf} 
+   \end{tabular}
+   \caption{
+     \label{FIGHIST}
+     Return level plots for the example \texttt{Garonne} with two
+     distributions for the excesses and historical data. Specific
+     plotting positions are used to take into account the historical
+     observations. The twp plots can be compared to those of
+     figure~\ref{RLP1}.}
+\end{figure}
+
+\subsection{Plotting positions}
+%%-----------------------------
+\label{MAXPLOTPOS}
+\index{plotting positions|(}
+\index{censoring|(}
+To be displayed on the return level plot (see figure~\ref{FIGHIST}),
+MAX or OTS data require suitable plotting positions. Naive
+plotting positions based on predictions where used in former
+versions of \pkg{Renext}. They are now replaced by more elaborated
+ones arising from some relevant literature on censored data~\citep{EnvStat}. 
+The principle is most easily understood for OTS data. 
+\begin{itemize}
+\item If there is only one OTS block with threshold $u_1>u$ and
+  duration $w_1$, then we can easily estimate the return period of the
+  level $u_1$ by counting the total number of exceedances over $u_1$
+  (including those during the OT period). The product $\lambda
+  S_X(u_1) = 1/T(u_1)$ is estimated as the number of exceedances
+  divided by the duration $w + w_1$. The plotting positions for the 
+  observations above $u_1$ are determined as usual, see 
+  section~\ref{plot.Renouv} above, with the estimated rate $\widehat{\lambda}$ 
+  replaced by $1 / \widehat{T}(u_1)$.  The number of
+  exceedances over $u$ is then estimated by assuming that the
+  observations with levels in $(u, \,u_1)$ occurred in the $w_b$ 
+  years of the block with the known rate for the $w$ years of the
+  OT data. We thus can estimate the return period $T(u)$ 
+  of $u$ and then those of the observations with level
+  between $u$ and $u_1$ using an interpolation.
+
+\item When $B$ OTS blocks exist, the threshold $u$ and the $B$
+  thresholds $u_b$ can without loss of generality be assumed to be
+  ordered as $u_{0} < u_{1} < \dots < u_{B}$ with $u_{0} := u$, and
+  thus define $B +1$ slices of levels $(u_{b},\,u_{b+1})$ for $0
+  \leqslant b \leqslant B$ with $u_{B+1} := \infty$. The previous
+  computation still applies for the upper slice which correspond to
+  levels in $>u_{B}$.  Starting from this highest slice, one can
+  then estimate by recursion the number of observations falling in
+  each of the slices $(u_{b},\,u_{b+1})$ for $b=B$, $B-1$, $\dots$,
+  $0$, and thus the return periods $T(u_{b})$.  The computation is
+  similar to that described by~\citet{HirschStedinger} for the
+  survival. The plotting positions for the observations in a slice
+  result from an interpolation.
+\end{itemize}
+
+<<echo=FALSE>>=
+ST <- SandT(Garonne)
+ub <- ST$thresh[2]
+u0 <- ST$thresh[1]
+nOT <- sum(Garonne$OTdata$Flow > ub)
+nOTS <- nrow(Garonne$MAXdata)
+nTOT <- nOT + nOTS
+wOT <- Garonne$OTinfo$effDuration
+wOTS <- Garonne$MAXinfo$duration
+wTOT <- wOT + wOTS
+@ 
+
+For MAX blocks, the plotting positions are computed by considering a
+MAX block as an OTS block with it its threshold set near to the
+smallest observation in the block, i.e. $u_b:= Z_{b,r_b} - \epsilon$
+in the notations used in~(\ref{eq:LLH1}) where $\epsilon$ is
+small. The chosen value of $\epsilon$ depends on the data.
+
+For instance, for the data \verb@Garonne@ with $B=1$, the MAX block
+can be considered as an OTS block with threshold 
+$u_1 = 6200-\epsilon = \Sexpr{ub}~\textrm{m}^3/\textrm{s}$.  The total number of
+observations in the upper slide $(u_1, \,\infty)$ is $\Sexpr{nOT} + \Sexpr{nOTS} = \Sexpr{nTOT}$
+(in the OT sample and the MAX block), during 
+$w + w_1 = \Sexpr{wOT} + \Sexpr{wOTS} = \Sexpr{wTOT}$~years. 
+So the return period of $u_1$ is
+$\Sexpr{wTOT}/\Sexpr{nTOT} = \Sexpr{round(wTOT/nTOT, digits = 1)}$~years.
+Now the number of observations in the next slide 
+$(u_0,\,u_1)$ is estimated by using the rate of such observations
+during the OT period.
+
+The computations are carried out by the \verb@SandT@ function which estimates both the
+survival $S$ and the return periods $T$. Details are provided in
+\cite{RenCompDet}.
+
+\index{plotting positions|)}
+\index{censoring|)}
+
+\index{historical data|)}
+\index{heterogeneous data|)}
+\index{block data|)}
+
+\subsection{Fitting from Rendata objects}
+%%----------------------------------------
+\index{Rendata class@{\texttt{Rendata} class}|(} 
+
+Recall that a S3 class \verb@"Rendata"@ is defined in \textbf{Renext}
+in order to represent heterogeneous data with optional block or historical
+data. An object of class \verb@"Rendata"@ contains an OT sample, but
+also embeds useful pieces of information such as the effective
+duration for the OT sample or the variable name.  It seems sensible to
+use these indications in a POT model by simultaneously passing them as
+formal arguments to the fitting function.  For instance, when the OT
+sample of a \verb@"Rendata"@ object is used in a fit, the effective
+duration could consistently be taken from this object.  \verb@Renouv@
+can indeed be used by giving an \verb@x@ formal with class
+\verb@"Rendata"@ instead of a numeric vector.
+
+<<label=fwGaronneObj, fig = TRUE, include=FALSE>>=
+fitWithObj <- Renouv(x = Garonne)
+@ 
+
+\noindent
+Note that the threshold is taken from the \verb@Rendata@ object's \verb@OTdata@ part, and
+will generally be too small for a POT modelling. It can be changed
+simply
+
+<<label=fwGaronneObj1, fig = TRUE, include=FALSE>>=
+fitWithObj1 <- Renouv(x = Garonne, threshold = 3000)
+@ 
+
+\noindent
+Similarly, the effective duration of the object can
+be shortcut by providing the \verb@effDuration@ formal argument 
+in the call. The distribution of the excesses can be set in the usual way.
+In all cases, the \verb@summary@ method should be invoked on the fitted 
+object.
+
+Using \verb@"Rendata"@ objects passed as \verb@x@ formals can simplify the task 
+of fitting many datasets files if these are read with the \verb@readXML@ function.
+\index{readXML function@{\texttt{readXML} function}}
+\index{Rendata class@{\texttt{Rendata} class}|)}
+
+\section{GPD excesses}
+%%===============================
+
+\subsection{Standard POT}
+%%----------------------------
+Of course, the \verb@Renouv@ function can be used with a GPD for the excesses.
+
+<<label=fGPDGaronne, fig=TRUE, include=FALSE>>=
+fit.GPD <- Renouv(x = Garonne$OTdata$Flow, effDuration = Garonne$OTinfo$effDuration, 
+                  threshold = 3000, distname.y = "GPD",
+                  main = "Garonne data, \"GPD\"")
+coef(fit.GPD)
+@ 
+
+\noindent
+The fitted distribution has a negative shape 
+$\widehat{\xi} = \Sexpr{round(coef(fit.GPD)["shape"],digits=2)}$, hence
+has a finite upper end-point, which makes a major difference with the 
+Weibull fit. The maximal level is thus estimated
+as $u - \widehat{\sigma}/\widehat{\xi} =   
+\Sexpr{round(3000 - coef(fit.GPD)["scale"]/ coef(fit.GPD)["shape"])}$. 
+
+As before, we can use the historical information in \verb@Garonne@
+
+<<label=fGPDGaronneH, fig=TRUE, include=FALSE>>=
+fit.GPD.H <- Renouv(Garonne, threshold = 3000, distname.y = "GPD",
+                    main = "Garonne data, \"GPD\" with MAXdata")
+coef(fit.GPD.H)
+@ 
+The maximal level is now estimated
+as  $\Sexpr{round(3000 - coef(fit.GPD.H)["scale"]/ coef(fit.GPD.H)["shape"])}$. 
+
+\begin{figure}
+   \centering
+   \begin{tabular}{c c} 
+     \includegraphics[width=8cm]{Rgraphics/fig-fGPDGaronne.pdf} &
+     \includegraphics[width=8cm]{Rgraphics/fig-fGPDGaronneH.pdf} 
+   \end{tabular}
+   \caption{
+     \label{FIGGPD} Using GPD excesses for \texttt{Garonne}.
+   }
+\end{figure}
+
+\subsection{Several parameterisations}
+%%-------------------
+\index{Lomax distribution|(}
+\index{maxlo distribution|(}
+The Lomax and maxlo\footnote{We use this new name for
+  an important yet apparently unnamed distribution. While 
+  the Lomax distribution is named after K.S. Lomax, no
+  Mrs or Mr Maxlo seems famous yet for having used it, hence the name does not require
+  a capital letter.
+}
+distributions are re-parameterisations of the GPD with shape $\xi > 0$ and
+$\xi <0$ respectively, see~\ref{LOMAX} and \ref{MAXLO}. In both cases,
+the distribution involves a scale parameter $\beta>0$ and a shape
+parameter $\alpha>0$. The exponential corresponds to a limit when $\alpha
+\to \infty$ and $\beta \to \infty$ while $\beta / \alpha$ tends to a
+finite limit $\sigma>0$.
+
+<<>>=
+fit.maxlo <- Renouv(x = Garonne$OTdata$Flow,
+                    effDuration = Garonne$OTinfo$effDuration, 
+                    threshold = 3000, distname.y = "maxlo")
+coef(fit.maxlo)
+@ 
+
+\noindent
+The scale parameter of the maxlo distribution is upper end-point for the excess, hence
+the upper end-point for the level is estimated as 
+$u + \widehat{\beta} = \Sexpr{round(fit.maxlo$threshold + fit.maxlo$estimate["scale"])}$ as it was with the \verb@GPD@ distribution.
+
+Choosing the Lomax distribution would here give an error
+
+<<>>=
+trylomax <- try(Renouv(x = Garonne$OTdata$Flow,
+                       effDuration = Garonne$OTinfo$effDuration,
+                       threshold = 3000, distname.y = "lomax"))
+class(trylomax)
+cat(trylomax)
+@ 
+
+\index{coefficient of variation} 
+\noindent
+When only OT data are used in the
+estimation, only one of the two distributions Lomax and maxlo can be
+fitted with \verb@Renouv@ without producing an error. Indeed, a
+finite ML estimator exists for the Lomax distribution if and only if the empirical
+coefficient of variation $\widehat{\mathrm{CV}}$ is greater
+than~$1$, while a finite ML estimator exists for the maxlo
+if and only~$\widehat{\mathrm{CV}} < 1$. Note that for a
+sample of size $n$ of a GPD with $\xi >0$ small, the probability that
+$\widehat{\mathrm{CV}} < 1$ hence that the ML estimation of the Lomax
+is impossible is not always negligible. For $\xi = 0$ the probability
+that $\widehat{\mathrm{CV}} < 1$ is computed by the \verb@pGreenwood1@
+function.
+
+Again, when MAX or OTS data are used only one of the two distributions
+Lomax and maxlo can be fitted
+
+<<>>=
+fit.maxlo.H <- Renouv(Garonne, threshold = 3000, distname.y = "maxlo")
+coef(fit.maxlo.H)
+@ 
+
+\noindent
+The situation can be quite confusing  when MAX or OTS data are
+used because it is possible then that the sign of the ML estimator of
+the GPD shape~$\xi$ differs depending on whether the block data (MAX
+and OTS) are used or not.  In such a case, it is simpler to directly use
+\verb@GPD@.
+
+\index{predict method@{\texttt{predict} method}}
+The return levels for the GPD or its re-parameterisation as Lomax or
+maxlo are identical. Inasmuch the delta method is used, the confidence
+intervals on the RL are identical as well, up to small 
+numerical differences.
+
+<<>>=
+predict(fit.GPD, newdata = c(100, 200))
+predict(fit.maxlo, newdata = c(100, 200))
+@ 
+
+\index{Lomax distribution|)}
+\index{maxlo distribution|)}
+
+
+\section{Fixing parameter values}
+%%======================================
+
+\index{fixed parameter values|(}
+
+\subsection{Problem}
+%%---------------
+In some situations one may want to fix one or several parameters in the
+distribution of excesses and still perform a ML estimation for
+the remaining parameters. For instance, the \verb@shape@ of a Weibull 
+distribution can be fixed while the \verb@scale@ is to be estimated.
+%% This can be viewed as a radical bayesian scheme with the fixed parameters
+%% receiving an 'ultra-informative' Dirac prior.  
+
+The \verb@Renouv@ function supports fixed parameters, with some limitations. 
+In the current version, the HPP rate parameter \textit{$\lambda$ can not
+be fixed}, and \textit{at least one parameter must be estimated
+in the excesses part}. Thus the full model must have at least two
+non-fixed parameters.
+
+The specification of the fixed parameter is done using the 
+\verb@fixed.par.y@ formal argument in \verb@Renouv@. Its value
+must be a named vector list with names in the distribution parnames.
+As a general rule\footnote{In some special cases, this is unnecessary
+but harmless.}, 
+the non-fixed (estimated) parameters must
+be given using the \verb@start.par.y@ arg with a similar
+list value.
+\index{initial values}
+
+\subsection{Example}
+%%--------------------
+The fixed parameter option can work with or without 
+historical data in the same manner.
+
+<<label=fixweibGaronneH, fig=TRUE, include=FALSE>>=
+fit.weib.fixed.H <- 
+  Renouv(x = Garonne$OTdata$Flow,
+         effDuration = 65, threshold = 3000,
+         MAX.data = list(Garonne$MAXdata$Flow),
+         MAX.effDuration = Garonne$MAXinfo$duration,
+         distname.y = "weibull",
+         fixed.par.y = c(shape = 1.4),
+         start.par.y = c(scale = 2000),
+         trace = 0,
+         main = "Garonne data, \"Weibull\" with MAXdata and fixed shape")
+@ 
+<<label=nonorth>>=
+fit.weib.fixed.H$estimate
+@
+
+\noindent
+With some distributions such as the SLTW some parameters \textit{must}
+be fixed.  Here the shift parameter \verb@delta@ is fixed 
+to~$\delta =2800~\textrm{m}^3/\textrm{s}$ meaning that we 
+believe that excesses over~$u-\delta=500$ are Weibull, 
+even if we only know excesses over the 
+threshold~$u=3000~\textrm{m}^3/\textrm{s}$.
+\index{SLTW distribution}
+
+<<label=fixSLTWGaronneH, fig = TRUE, include=FALSE>>=
+fit.SLTW.H <- 
+  Renouv(x = Garonne$OTdata$Flow,
+         effDuration = 65, threshold = 3000,
+         MAX.data = list(Garonne$MAXdata$Flow),
+         MAX.effDuration = Garonne$MAXinfo$duration,
+         distname.y = "SLTW",
+         fixed.par.y = c(delta = 2800, shape = 1.4),
+         start.par.y = c(scale = 2000),
+         main = "Garonne data, \"SLTW\" with MAXdata, delta and shape fixed")
+@ 
+
+\noindent
+When some parameters are fixed the covariance contains structural
+zeros, and consequently the correlation matrix contains non-finite coefficients.
+
+<<label=nonorth>>=
+fit.SLTW.H$cov
+@ 
+
+\begin{figure}
+   \centering
+   \begin{tabular}{c c} 
+     \includegraphics[width=8cm]{Rgraphics/fig-fixweibGaronneH.pdf} &
+     \includegraphics[width=8cm]{Rgraphics/fig-fixSLTWGaronneH.pdf} 
+   \end{tabular}
+   \caption{Return level plots for the example \texttt{Garonne} with two distributions 
+     with \textbf{fixed parameters} (and historical data).}
+\end{figure}
+
+\subsection{All parameters known}
+%%--------------------------------------
+\index{RenouvNoEst@{\texttt{RenouvNoEst}}}
+Using \verb@Renouv@ with its \verb@fixed.par@ argument is possible  when
+some of the parameters are known, but not all of them.
+The \verb@RenouvNoEst@ function can be used to create a \verb@Renouv@
+object with all its parameters known, including the Poisson 
+rate~$\lambda$. This can be useful to use \verb@plot@ or \verb@predict@
+with known parameters. See the help \verb@?RenouvNoEst@ for 
+an example.
+
+\index{fixed parameter values|)}
+
+
+\section{Likelihood Ratio tests}
+%%=======================================
+\index{Likelihood Ratio test|(}
+
+\subsection{Using the \texttt{anova} method}
+%%----------------------
+In section~\ref{FitGaronne}, two POT models were fitted using the same
+\verb@Garonne@ data with exponential and Weibull distributions for the
+excesses. The ML estimate for the Weibull shape was $\widehat{\alpha} =
+\Sexpr{round(coef(fit.weibull)["shape"], digits = 2)}$, and since the
+exponential distribution corresponds to Weibull with shape $\alpha =
+1$, it seems natural to test the hypothesis $H_0:\,\alpha=1$ against
+the alternative $H_1:\,\alpha \neq 1$.
+
+\index{constraint!equality (test of)} 
+More generally, we can consider
+two \textit{nested models}: the null hypothesis $H_0$ imposes some
+restrictions\footnote{Equality constraints.}  on the parameter
+vector~$\bs{\theta}$ which is unrestricted under the alternative
+$H_1$. The Likelihood Ratio (LR) statistic is obtained by maximising
+the restricted and unrestricted likelihoods as 
+\index{nested models}%
+$$
+\textrm{LR} :=
+%%\frac{L(\widehat{\bs{\theta}}_0)}{L(\widehat{\bs{\theta}}_1)} =
+\frac{\textrm{maximal likelihood under }H_0}{\textrm{maximal
+    likelihood under }H_1},
+$$
+with values $\textrm{LR} \leqslant 1$. It is often convenient to use
+the test statistic $W := - 2 \log \textrm{LR}$, which takes values
+$W\geqslant 0$ and is the difference of the \textit{deviances} $D :=
+-2 \log L$.  \index{deviance} A large value for $W$ tells that
+$H_0$ should be rejected.  Under some general conditions, it
+can be proved that $W$ has asymptotic distribution $\chi^2(r)$ where
+$r$ is the number of independent scalar restrictions imposed by the
+null hypothesis, so $r=1$ in the exponential vs Weibull case.
+
+LR tests are often made available in R packages through the
+\verb@anova@ method which must be implemented for the class of fitted
+models that we wish to test. The \verb@anova@ methods compare nested
+models fitted \textit{with the same data}.  In a general context, it
+is enough to extract the log-likelihood and the number of parameters
+for each model. The  statistic $W$ above is computed and compared to its
+asymptotic distribution.  In \pkg{Renext}, the \verb@anova@ method was
+implemented for the \verb@Renouv@ class. For instance using two
+\verb@Renouv@ objects created before 
+<<label=anova1>>=
+anova(fit.exp, fit.weibull)
+@ 
+
+\index{Weibull distribution}%
+
+\noindent
+which tells that the null hypothesis of an exponential distribution
+must here be rejected at any level $\alpha \leqslant
+\Sexpr{round(anova(fit.exp, fit.weibull)[2, "Pr(>W)"], digits = 2)}$ and
+accepted for larger values of $\alpha$. So in practice we would here
+accept~$H_0$.
+
+Note that the same test statistic $W$ could have been used to test
+$H_0$ against the thin-tailed Weibull alternative $H_1: \alpha >1$,
+which seems in better accordance with the data. But the asymptotic
+distribution of $W$ would then no longer be $\chi^2$, and be that of
+the product $BC$ of two independent random variables with Bernoulli
+and chi-square distributions $B \sim \texttt{Ber}(1/2)$ and $C \sim
+\chi^2(1)$.
+%% \citep{Kozubowski}. 
+The reason is that the tested value of the parameter is now on the
+boundary of parameter domain, and the statistic $W$ takes the value
+$0$ when $\widehat{\alpha}<1$.  For $w >0$ we have $\Pr\{BC > w\} =
+\Pr\{ B=1 \} \Pr\{ C > w \}$, so the $p$-value for $H_1: \alpha <1$ is
+about 
+$\Sexpr{round(anova(fit.exp,fit.weibull)[2,"Pr(>W)"]/2,digits=2)}$ 
+and the exponentiality would thus still be rejected.
+
+%% <<>>=
+%% pchisq(4.02, df = 1, lower.tail = FALSE) 
+%% @ 
+
+\subsection{LR test for the GPD family}
+%%----------------------
+\index{Lomax distribution|(}
+\index{maxlo distribution|(}
+\index{exponential distribution|(}
+In the standard POT framework, excesses are assumed to follow a GPD, say
+$\texttt{GPD}(0,\,\sigma,\,\xi)$. Depending on the sign of $\xi$, very
+different tail behaviour and return levels will be obtained.  Not
+infrequently, the ML estimate $\widehat{\xi}$ is close to zero 
+thus suggesting to test the null hypothesis~$\xi = 0$ corresponding to
+the exponential distribution.  Three (composite) alternative
+hypotheses are often of interest
+$$
+   \textrm{H}_0: \: \xi = 0 \: (\textrm{exponential}) \quad 
+   \textrm{against} \qquad  \textrm{H}_1:
+   \begin{cases} 
+     \xi \neq 0 & \textrm{(GPD)},\\
+     \xi > 0    & \textrm{(Lomax)},\\
+     \xi < 0    & \textrm{(maxlo)}.\\
+   \end{cases}
+$$  
+The LR still can be used as test statistic. However, a well-known
+problem is that the distribution of the LR ratio has a \textit{very
+  slow convergence} to its asymptotic distribution in the present
+context\footnote{See e.g. \cite{Kozubowski}}.  More than $100$ excesses
+are typically needed to obtain a $p$-value with a two-digit
+precision. For instance, with the Lomax alternative, the probability
+to obtain $W=0$ under $H_0$ is the probability that
+$\widehat{\mathrm{CV}}<1$ and is given by the \verb@pGreenwood1@
+function related to the Greenwood's statistic. For $n=50$, we get
+$\Pr\{W = 0\} \approx \Sexpr{round(pGreenwood1(n = 50), digits = 2)}$
+while the asymptotic probability mass is $0.5$.  
+\index{Greenwood's statistic}
+
+To overcome this problem of slow convergence, the distribution of the
+test statistic for a given sample size $n$ has been computed by
+Monte-Carlo simulations and a statistical model was fitted to allow a
+more precise evaluation of the distribution of~$W$
+\citep{RenCompDet}. This approximation is used in the
+\verb@LRexp.test@ and also in the \verb@anova@ method for the
+\verb@Renouv@ class as far as no MAX or OTS data are used.
+
+<<>>=
+anova(fit.exp, fit.GPD)
+anova(fit.exp, fit.maxlo)
+@ 
+
+\noindent
+So none of the two tests would reject exponentiality.
+
+The LR test also works with heterogeneous data. However the usual
+asymptotic approximation will still be used as soon as the compared
+fits used MAX or OTS block data. 
+
+<<>>=
+anova(fit.exp.H, fit.GPD.H)
+anova(fit.exp.H, fit.maxlo.H)
+@ 
+
+\noindent 
+So when the historical data are used, the exponentiality hypothesis
+is still accepted against the $\xi < 0$ alternative, but the 
+$p$-value is now smaller. 
+
+%% As a rule of thumb, the asymptotic approximation is acceptable when
+%% the whole information used in the fit is equivalent to $120$ standard
+%% POT observations.
+
+Concerning the specific application to the \verb@Garonne@ data, it
+must be said that the tests give pretty different results when the
+threshold varies in the range $[2500, \,3500]$. For instance,
+the exponentiality is rejected at the $5\%$ level when the 
+threshold is taken as $3200$.
+\index{maxlo distribution|)}
+
+\subsection{Other tests for  the exponential-GPD context}
+%%-------------------------------------
+As far as only OT data are used, two other tests of \pkg{Renext} can
+be used to test the exponential $\xi = 0$ against the Lomax
+alternative. These tests use the squared coefficient of variation
+%% ${\widehat{\mathrm{CV}}^2}$ 
+and the Jackson's statistic and named
+\textit{$\mathrm{CV}^2$ test} 
+(or \textit{WE test}, for Wilk's Exponentiality test) and
+\textit{Jackson's test}. As for the LR test, the distribution of the test
+statistic for both of these tests is approximated thanks to a
+statistical model fitted on simulated values.  In accordance with the
+results of \citet{Kozubowski}, the Jackson's test was found on
+simulations to be nearly as poweful as the LR test, both having
+greater power than the $\mathrm{CV}^2$ test.
+
+We can use these two tests for the excesses of the \verb@Garonne@
+example, although the Lomax alternative $H_1: \xi > 0$ is clearly
+not well supported by the data
+
+<<>>=
+X <- Garonne$OTdata$Flow
+Y <- X[X > 3000]
+c(CV2 = CV2.test(Y)$p.value, Jackson = Jackson.test(Y)$p.value)
+Y <- X[X > 3300]
+c(CV2 = CV2.test(Y)$p.value, Jackson = Jackson.test(Y)$p.value)
+@ 
+
+\noindent
+So both tests accept $H_0: \xi = 0$ against the Lomax alternative.
+The computed $p$-value in these tests can be $1$ (exactly), which may
+seem unusual.  The reason is that the $p$-value is computed with a
+precision which is not greater than two digits and is rounded.  This
+is not a concern for large $p$-values ($\approx 1$).
+
+\index{Garonne data@{\texttt{Garonne} data}|)}
+\index{Lomax distribution|)}
+\index{test of exponentiality!likelihood ratio}
+\index{test of exponentiality!Jackson's}
+\index{test of exponentiality!WE or Wilk's or $\mathrm{CV}^2$}
+
+\index{Greenwood's statistic}
+\index{Jackson's test}
+
+\index{Likelihood Ratio test|)}
+\index{exponential distribution|)}
+
+\index{Renouv class@{\texttt{Renouv} class}|)}

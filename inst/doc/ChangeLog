@@ -1,0 +1,58 @@
+Dear Emacs, please make this -*-Text-*- mode!
+	
+	         CHANGES IN Renext User's Guide VERSION 2.4-0
+
+	o The document was splitted in several files one by chapter.
+	Two new chapters on block maxima and graphics are added. 
+	Many changes were done du to the numerous changes brought to Renext
+	since the latest version of this doc.
+
+	
+	         CHANGES IN Renext User's Guide VERSION 2.1-0
+
+CHANGES
+
+    o In the first code chunk (not shown in the pdf) we now
+    use the 'utils::packageVersion' function.
+
+	         CHANGES IN Renext User's Guide VERSION 2.0-13
+
+
+CHANGES
+
+    o In section 1.2.4, the terminology of partial observations 
+    and temporal aggregation is used in connection with the block
+    maxima and r-largest.
+
+    o The vol. 2 of Feller's Introduction to probability is 
+    added to bibliography in connection with completely 
+    monotonicity and continuous mixtures.
+
+   
+	         CHANGES IN Renext User's Guide VERSION 2.0-12
+
+
+CHANGES
+
+    o The bibliography style was changed. Some classical references
+    where added.
+
+    o Some index entries were added.
+
+    o The moment estimators are mentioned for some distributions. 
+    This enlightens the comparison of the CV with unity.	
+
+    o The description of the 'Lomax' distribution was enhanced, and the 
+    'Maxlo' distribution is now described. In the 'estimation' 
+    subsections for some special distributions, the concentration
+    of log-likelihood is now mentioned.
+
+    o In appendix B, the order of the distributions was changed so that
+    the (quite unusual) transformed exponential distributions appear
+    after Lomax and Maxlo.
+
+
+BUGS/ERRORS FIX	          
+
+    o For the log-normal distribution, there were an error in the 
+    written density since 'y' was under the square root sign.  

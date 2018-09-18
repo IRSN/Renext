@@ -1,0 +1,1595 @@
+\chapter{Distributions}
+%%===========================
+
+\section{Asymptotic theory}
+%%==================================
+\label{ASYMPTGEV}
+\index{domain of attraction|(}
+
+\subsection{An important theorem}
+%%------------------------------------
+\index{Fisher-Tippett-Gnedenko theorem|(}
+
+The following conventions or definitions are used.
+
+\begin{list}{$\bullet$}{\setlength{\itemsep}{2pt}\setlength{\topsep}{2pt}}
+  
+\item Two probability distributions $F(x)$ and $G(x)$ are of same type
+  when $G(x) = F(ax + b)$ for some constants $a>0$ and $b$. All
+  distributions of a given type are often written as
+  $F_0([x-\mu]/\sigma)$ where $F_0(z)$ is a chosen member of the type,
+  $\mu$ (location) and $\sigma>0$ (shape) are parameters. The
+  parameters $\mu$ and $\sigma$ are not necessarily the mean nor the
+  standard deviation.
+
+\item  The notation $z_+$ is for the positive part of a number~$z$, that is
+  $z_+ =\max(z,\,0)$. 
+
+\end{list}
+
+A central result of Extreme Values theory is the following
+
+%% ============================================================================
+\newtheorem*{theo}{Theorem}
+%%{Theorem (Fisher-Tippett-Gnedenko)}
+\begin{theo}[\textbf{Fisher-Tippett-Gnedenko}]
+  
+  Let $X_n$ be a sequence of independent and identically distributed
+  random variables, and let $M_n=\max(X_1,\,X_2,\,\dots,\,X_n)$. If
+  there exists two sequences $b_n$ and $a_n>0$ such that
+  $(M_n-b_n)/a_n$ has a non-degenerate limiting distribution~$G(z)$,
+  then that limiting distribution must be one of the following three
+  types
+  \begin{center}
+    \begin{tabular}{l l}
+      $G(z) = \exp\{-e^{-z}\}$       &Gumbel or type I\\
+      $G(z) = \exp\{-z_+^{-\alpha}\}$ &Fr\'echet or type II\\
+      $G(z) = \exp\{-(-z)_+^\alpha\}$ &Weibull (reversed) or type III
+    \end{tabular}
+  \end{center}
+  where $\alpha >0$ is a parameter for types II or III.
+  
+\end{theo}
+%%============================================================================
+
+For each type, the distribution depends on $\mu$ and $\sigma>0$ and
+possibly of $\alpha>0$. E.g. the general Gumbel distribution is
+$$
+G(x) = \exp\left\{-\exp\left[-(x-\mu)/\sigma\right] \right\}.
+$$ 
+The third distribution corresponds to values $z \leqslant 0$ and
+is often called Weibull. This
+may create a confusion with the ordinary Weibull described below. 
+A preferable appellation is
+\textit{reversed Weibull}.
+
+Each of the three possible limiting distributions is
+\textit{max-stable} \index{max-stable distribution} i.e. is closed for
+the maximum of independent and identically distributed random
+variables. For example if the $X_i$ are independent with the same
+Gumbel distribution, then their maximum $M_n$ is also of Gumbel type.
+
+\index{Frechet distribution@{Fr\'echet distribution}}
+\index{Gumbel distribution}
+\index{reversed Weibull distribution}
+
+The three possible limit distributions are fairly different. Some
+mathematical criteria allow to say whether a given distribution of
+$X_k$ is in the \textit{domain of attraction} of Gumbel, Fr\'echet or
+(reversed) Weibull \citep[chap.~3]{EKM}. Some usual examples are found
+in the book of~\citet[chap.~1]{KOTZ} and table~\ref{ATTRACT} gives the
+domains of attraction for the main distributions used in
+\textbf{Renext}. Broadly speaking, distributions with exponentially
+decaying upper tail (such as normal, exponential, gamma) fall in the
+domain of attraction of Gumbel. The Fr\'echet domain attracts
+heavy-tailed distributions (Pareto, Cauchy).
+
+
+  \begin{table} 
+  \centering  
+  \begin{tabular}{l l }
+    \toprule
+    \multicolumn{1}{c}{\rule{0pt}{11pt} \textbf{distribution of $X_i$}} & 
+    \multicolumn{1}{c}{\textbf{limit of} $M_n$ }\\  \toprule
+    exponential   & Gumbel\\ 
+    Weibull       & Gumbel\\ 
+    gamma         & Gumbel\\  \midrule
+    GPD $\xi =0$  & Gumbel\\ 
+    GPD $\xi >0$  & Fr\'echet\\
+    GPD $\xi <0$  & reversed Weibull\\ \midrule
+    log-normal    & Gumbel\\ 
+    finite mixture of exponentials    &  Gumbel\\  
+    Pareto        &  Fr\'echet\\ 
+    Cauchy        &  Fr\'echet\\ \toprule
+  \end{tabular}
+  \caption{\label{ATTRACT}Domain of attraction of some classical distributions.}
+\end{table}
+
+\index{Fisher-Tippett-Gnedenko theorem|)}
+
+\subsection{The Generalised Extreme Value distribution}
+%%--------------------------------------
+The three types of the theorem above can be considered as special cases of the 
+\textit{Generalised Extreme Value} distribution
+\index{GEV distribution!definition} 
+\index{Generalised Extreme Value|see{GEV distribution}} 
+depending of a shape parameter $\xi$
+$$
+   G(z) = \exp\left\{ - \left[1 + \xi \, z \right]^{-1/\xi}_+ \right\}.
+$$
+The sign of the shape parameter $\xi$ is essential.
+When $\xi>0$ we retrieve the Fr\'echet above up to a translation of $z$. 
+For  $\xi<0$ we get the reversed Weibull  up to a translation of $z$.
+When $\xi=0$ the power $\left[1 + \xi \, z \right]^{-1/\xi}$ is to be replaced 
+by its limit for $\xi \rightarrow 0$ which is
+$e^{-z}$ and $G(z)$ is the Gumbel distribution function above.
+
+Using a linear transform $z=(x-\mu)/\sigma$ with arbitrary $\mu$ and  
+$\sigma>0$ all distributions of the GEV type are obtained as
+\begin{equation}
+  \label{eq:GEVDIST}
+  G(x) = 
+  \exp\left\{ - \left[1 + \xi \, 
+      \frac{(x-\mu)}{\sigma} \right]^{-1/\xi}_+ \right\}.
+\end{equation}
+This distribution is named GEV with location parameter $\mu$ and scale parameter 
+$\sigma>0$, and it will be denoted as $\texttt{GEV}(\mu,\,\sigma,\,\xi)$. It
+is defined on the set of values $x$ for which the bracketed expression within $[\,]$ 
+in~(\ref{eq:GEVDIST}) is non-negative that is
+\begin{center}
+  \small
+  \begin{tabular}{c | c | c}
+    $\xi < 0$ & $\xi = 0$ & $\xi >0$ \\ \hline
+   \rule{0pt}{11pt} $-\infty <  x \leqslant  \mu- \sigma/\xi$ &
+    $-\infty <  x < +\infty$ &
+    $\mu- \sigma/\xi \leqslant  x  < +\infty$ 
+  \end{tabular}
+\end{center}
+so the GEV distribution has a finite upper end-point for $\xi < 0$.
+\index{end-point}
+
+A distribution $F(x)$ satisfying the conditions
+Fisher-Tippett-Gnedenko theorem can be said to be in the domain of
+attraction of the GEV with shape~$\xi$; the sign of the shape
+parameter and ist value characterize the tail behaviour of the
+distribution.  
+\index{domain of attraction}
+
+Grouping the three distributions of the theorem into one GEV family
+may be thought of as a purely formal trick.  However, since the GEV
+distribution is regular at $\xi =0$ we have a parametric family in the
+usual sense, with a parameter $\xi$. Thus it makes sense to estimate
+the parameter~$\xi$ without specifying its sign, or to give a
+confidence interval including the value~$\xi=0$. Note that the support
+of the distribution depends on the parameters and thus that Maximum
+Likelihood (ML) theory must be invoked with care.
+
+\subsection{POT}
+%%---------------
+\label{GEVGPD}
+\index{Pickands-Balkema-de~Haan~theorem|(} 
+%% \begin{Prov}
+%%  why and how GEV are used through GPD for exceedances
+%%\end{Prov}
+The Fisher-Tippett-Gnedenko theorem suggests that the GEV distribution should be 
+systematically used to describe block maxima.  A comparable result holds for the 
+POT context.
+
+%%============================================================================
+\begin{theo}[\textbf{Pickands-Balkema-de Haan}]
+  
+  Assume that the distribution $F_X$ is in the domain of attraction of
+  the GEV distribution with shape $\xi$, and let $x^\star$ denote its 
+  upper end-point. Then there exists a positive function $a(u) > 0$
+  such that for any $z$ with $z > 0$ and $1 + \xi z > 0$
+  $$
+  \lim_{u \to x^\star} \Pr\bCond{X - u > a(u) z}{X > u}  =
+  \left[ 1 + \xi z \right]^{-1/\xi}.
+  $$ 
+\end{theo}
+%%============================================================================
+\noindent
+See theorem~4.1 in~\citet{COLES} or theorem~3.4.5 in \citet{EKM}.
+
+The implication in POT and the marked process context is that when a
+large enough threshold~$u$ is chosen, the scaled excess $Z:=Y/a(u)$
+with $Y:= X-u$ has approximately the survival $S(z) = [1 + \xi
+z]^{-1/\xi}$, meaning that $Y$ approximately follows a two-parameter
+Generalised Pareto Distribution (GPD) with shape $\xi$ and scale
+$a(u)$, see~\ref{GPDPROP}.
+
+% This justification is strengthened by the compound maximum results
+% given in~\ref{COMPOUND} and the special cases~\ref{SPECIALCASES}.
+
+
+%%*******************************************************************************
+
+\index{Pickands-Balkema-de~Haan~theorem|)} 
+\index{domain of attraction|)}
+
+\section{Probability distributions in POT}
+%%=============================================
+
+\subsection{Levels vs excesses} 
+%%---------------------------------
+\index{levels vs excesses}
+\index{excess}
+POT methods fit a distribution to the excesses 
+$Y_i=X_i-u$ over a fixed threshold~$u$. The excesses are positive by construction 
+and  might contain small values since the threshold will generally be
+taken greater than the mode of~$X$.
+
+In the rest of this section the letter $X$ will be used for a level while $Y$ 
+is used for a positive excess random variable. The densities and 
+distribution functions of $X$ will be denoted as $f_X(x)$ and $F_X(x)$ while 
+the $Y$ subscript is used for $Y$. Thus 
+$$
+    f_X(x) = f_Y(x-u), \qquad f_Y(y) = f_X(y+u).
+$$
+
+%%This translation relationship applies for all distributions described below 
+%%\textit{except for the transformed exponential} distribution~\ref{TRANSEXP}
+%%where the translation operates on transformed variables.
+
+For the distribution fitted in POT the threshold~$u$
+\textit{is not a parameter} to be estimated.  Yet the probability
+functions for level~$X$ can have a location  parameter. 
+R~functions used for~$Y$ can also have a location parameter with  
+suitable default value for it. 
+
+
+\subsection{Coefficient of variation}
+%%---------------------------
+The \textit{coefficient of variation} 
+\index{coefficient of variation} 
+CV of a positive random variable $Y$ is the ratio of the 
+standard deviation  to the mean
+\begin{equation}
+  \label{eq:CVTHEO}
+  \mathrm{CV} = \sqrt{\Var(Y)}/\Esp(Y).
+\end{equation}
+Comparing this theoretical~CV to its empirical equivalent
+$\widehat{\mathrm{CV}}$ is often instructive, keeping in mind that
+$\widehat{\mathrm{CV}}$ is subject to sampling fluctuation.  For an exponential
+distribution we have $\textrm{CV}=1$; a mixture of several exponentials
+corresponds to $\textrm{CV}>1$. When fitting distributions from the Pareto
+families, comparing $\widehat{\mathrm{CV}}$ to~$1$ will often be essential,
+see~\ref{SignXI} page~\pageref{SignXI} below.
+
+\subsection{Some useful probability functions}
+%%------------------------------------------
+Several probability functions provide useful insights about the upper tail
+of a given distribution. Their name is related to 
+\textit{survival analysis} where the random variable 
+of interest is the lifetime~$Y$ of a subject or item. 
+The relation with POT is: increasing the POT threshold~$u$ is equivalent to 
+selecting subjects still alive 
+at "time"~$u$.
+
+The \textit{survival function} value $S(y)$ is the probability $\Pr\{Y >y \} = 1-F(y)$. 
+\index{survival function}
+The \textit{hazard function}~$h(v)$ is defined by   
+$$
+   h(v)\,\textrm{d}v = \Pr\bCond{v < Y \leqslant v + \textrm{d}v }{Y > v },  \qquad v \geqslant 0
+$$
+corresponding to the notion of instantaneous death rate. An usual
+equivalent definition is $h(v)=f(v)/S(v)$. \index{hazard function} In
+survival analysis, hazards are usually non-decreasing since a
+decreasing hazard would mean a "rejuvenation" effect. Yet in POT
+modelling, distributions often have decreasing hazards. A decreasing
+hazard will correspond either to an exponential tail behaviour if the
+limit of $h(y)$ for $y \to \infty$ is positive (as for the gamma distribution
+ot the finite mixture of exponentials), or to a long-tail
+hence heavy-tail behaviour otherwise.
+
+The \textit{mean residual life} MRL (or mean excess life) is defined as
+\index{mean residual life}
+\index{MRL|see{mean residual life}}
+$$
+  \textrm{MRL}(v) := \Esp\bCond{Y - v}{Y > v}, \qquad v \geqslant 0.
+$$
+While a decreasing~$\textrm{MRL}(v)$ may seem natural, a distribution
+with long tail such as GPD can have an increasing mean residual
+life. One can show that an increasing hazard rate implies an increasing
+mean residual life.
+% $$
+%    \frac{\mathrm{d}}{\mathrm{d} v}\textrm{MRL}(v) = \textrm{MRL}(v)\, h(v) -1
+% $$
+
+Another meaningful function is the \textit{cumulative hazard}~$H(y)$ 
+\index{cumulative hazard}
+$$
+   H(y) = - \log S(y) = \int_{0}^y h(z)\,\textrm{d}z,   \qquad y \geqslant 0.
+$$
+Increasing and decreasing hazards $h(y)$ are respectively equivalent
+to convex and concave cumulative hazards $H(y)$. When the distribution
+function~$F(y)$ is plotted on an exponential plot,
+\index{exponential plot}%
+the ordinate used is in fact $H(x)$, see page~\pageref{FUNCPLOTS}.
+The concavity of the resulting curve is that of~$H(y)$, and hence is
+related to the variation of $h(y)$. Distributions with increasing
+hazard $h(y)$ will give a convex (upward concave) curve on the
+exponential plot while a decreasing $h(y)$ leads to a concave
+(downward) one.  The same effect is observed for the exponential
+return level plot but with axes exchanged hence with opposite
+concavity.
+
+
+
+An alternative to the quantile function $q_X(p)$~of~$X$ is the following
+\textit{return level function}, sometimes called \textit{tail quantile function}. 
+\index{return level!$m$~years}%
+\index{tail quantile function}%
+Consider an independent and identically distributed sequence~$X_i$
+with survival~$S_X(x)$; for a given $m>1$ the value $x_m$ that is
+exceeded on average once every $m$~observations is given by the
+equation
+\begin{equation}
+  \label{eq:MRETURN}
+    S_X(x_m) = 1/m  \qquad (m > 1)
+\end{equation}
+and it can be called the return level with period $m$ (or $m$-return
+level).  This is an increasing function of~$m$ with limit for
+large~$m$ the upper end-point of the distribution of~$X$. For many
+distributions the solution of~(\ref{eq:MRETURN}) exist in closed
+form. In the POT context where levels $X_i$ are observed on a rate of
+$\lambda$ events by years, the value of $m$ in (\ref{eq:MRETURN}) is
+to be divided by the rate $\lambda$ to obtain the corresponding period
+$T$. Then $x_m$ is the return level corresponding to period
+$T:=m/\lambda$.
+
+Since $1/m = S_X(x_m)$, we have $\log m = H_X(x_m)$. Thus plotting
+points $[\log m,\,x_m]$ i.e. points $[m,\,x_m]$ with a log scale for
+the first axis (return periods) is equivalent to plotting points
+$[x,\,H_X(x)]$, but with the two axes exchanged.
+
+%% \begin{Prov}
+%%  Graphics showing the exponential plot and the corresponding return level plot
+%%\end{Prov}
+
+%%*****************************************************************************
+\section{Distributions in Renext}
+%%========================
+
+
+
+\begin{table}
+  \centering
+  \begin{tabular}{l c c l l}
+    \toprule
+    \multicolumn{1}{c}{\textbf{dist. name}} &
+    \multicolumn{1}{c}{\textbf{ini.}} &
+    \multicolumn{1}{c}{\textbf{spec. ML}} &
+    \multicolumn{1}{c}{\textbf{par. name}} &
+     \multicolumn{1}{c}{\textbf{note}} \\  \toprule
+    \texttt{exponential} & n & y
+    & 
+    \texttt{rate} &  GPD with $\xi = 0$ \\
+    %% -------------------------------------------------------------  
+    \texttt{gpd} & n & y
+    & \texttt{scale}, \texttt{shape} & 
+    from the \textbf{evd} package
+    \\
+    %% --------------------------------------------------------------
+    \texttt{GPD} & n & y
+    &
+    \texttt{scale}, \texttt{shape} & 
+    \texttt{NaN} with bad  parameters \\
+    %% --------------------------------------------------------------  
+    \texttt{lomax} & n & y
+    & 
+    \texttt{scale}, \texttt{shape} & 
+    GPD with $\xi > 0$ \\      
+    %% --------------------------------------------------------------  
+    \texttt{maxlo} & n & y
+    & 
+    \texttt{scale}, \texttt{shape} & 
+    GPD with $\xi < 0$  \\ \midrule
+    %% --------------------------------------------------------------
+    \texttt{weibull} & n  & y
+    &
+    \texttt{scale}, \texttt{shape} & 
+    \\   
+    \texttt{gamma} & n & y
+    & \texttt{scale}, \texttt{shape} &
+    \\      
+    %% --------------------------------------------------------------
+    \texttt{lnorm} & n & y
+    & \texttt{meanlog}, \texttt{sdlog} & 
+    \\ 
+    %% --------------------------------------------------------------
+    \texttt{mixexp2} & n & n
+    &
+    \texttt{prob1}, \texttt{rate1}, \texttt{delta} & 
+    \\ %% \midrule
+    %% --------------------------------------------------------------
+    \texttt{SLTW} & y & n
+    & 
+    \texttt{delta}, \texttt{scale}, \texttt{shape} & 
+    \\
+    \toprule
+  \end{tabular}
+  \caption{
+    Distributions in \texttt{Renouv}. The \textbf{ini.} column
+    indicates whether or not initial values are always required on input. 
+    The \textbf{spec. ML}
+    columns indicates if a specific ML estimation is used. However the
+    special ML is used when only OT data are used.  
+    \index{initial values}
+  }
+\end{table}
+
+
+
+
+
+\subsection{Exponential}
+%%---------------------
+\index{exponential distribution|(}
+\subsubsection*{Definition}
+%%---------------------
+The exponential distribution has a survival function $S(y)$ and a density $f(y)$ given by
+\begin{equation}
+  \label{eq:defExp}
+  S(y) = e^{-\nu y}, \qquad f(y) = \nu\, e^{-\nu y}, \qquad y \geqslant 0
+\end{equation}
+where $\nu>0$ is a parameter called \textit{rate}. 
+
+\subsubsection*{Properties}
+%%---------------------
+The equation  $S(y)=1/m$ giving the "$m$ years return level" has the explicit 
+solution $y_m = \log(m)/\nu$.
+
+The exponential distribution has constant hazard rate --~a fact known as the
+"memorylessness property".  It therefore also has a constant mean residual life.
+
+The exponential is a special case of several families: Weibull (with
+shape $\alpha=1$), GPD (with shape $\xi = 0$) and gamma (with shape
+$\alpha=1$).  For these three families, the shape parameter is in
+one-to-one relation with the coefficient of variation CV which can
+take values smaller or larger than~$1$. Within the three families, the
+exponential is characterized by~$\textrm{CV}=1$.  
+\index{coefficient of variation}
+
+The exponential distribution is closely related to Gumbel distribution. 
+If $Y$ is exponential then $V=-\log Y$ is Gumbel.
+
+
+\subsubsection*{Estimation and inference}
+%%-------------------------------------
+\index{inference!exact for the exponential rate}
+The exponential distribution has a well known ML inference from an
+ordinary sample~$Y_i$ of size~$n$.
+
+The  ML estimator for $\nu$ is the inverse of the sample mean
+$\widehat{\nu}=1/\bar{Y}$. Up to a scaling factor the exponential distribution 
+is nothing but the $\chi^2(2)$ with two degrees of freedom. More precisely
+$2 \nu\, Y_i \sim \chi^2(2)$. Multiplying the sum $\sum_iY_i= n\,\bar{Y}$ by $2 \nu$ 
+gives a "pivotal" quantity $V = 2 \nu \times n\,\bar{Y}$ 
+having a $\chi^2(2n)$ distribution. Since $V = 2n\,\nu/\widehat{\nu}$,  
+an exact confidence interval at the level $1-\alpha$ for
+$\nu$ is obtained as 
+$$
+     \frac{\chi^2_{1-\alpha/2}}{2n}  \times 
+       \widehat{\nu} \leqslant \nu \leqslant 
+     \frac{\chi^2_{\alpha/2}}{2n} \times  \widehat{\nu}
+$$
+where $\chi^2_\alpha$ is the upper quantile for the $\chi^2(2n)$ 
+distribution\footnote{$\Pr\left\{\chi^2(2n)> \chi^2_\alpha \right\} =\alpha$}. 
+Exact confidence intervals are similarly derived for the distribution~$F(y)$ with
+given $y$ or for a $m$-return level $y_m$ with $m$ given.
+\index{exact inference}
+
+\subsubsection*{Goodness-of-fit}
+%%----------------------------
+A specific goodness-of-fit test for the exponential distribution is sometimes 
+called Bartlett's (or Moran's) test of exponentiality.
+\index{test of exponentiality!Bartlett's}%
+\index{test of exponentiality!Moran's}
+%%~\cite{EAU2} p.~347 
+The  test statistic $B_n$ involves the sample mean $\overline{Y}$ as well as 
+the sample mean $\overline{\log Y}$ of the logged $Y_i$
+$$
+     B_n = b_n \times \left\{\log \bar{Y} - \overline{\log Y} \right\},
+     \qquad b_n = 2n \times  \left\{1+ (n+1)/(6n) \right\}^{-1}.
+$$
+Under the null hypothesis we have approximately  $B_n \sim \chi^2(n-1)$ and 
+a two-sided test is in order.
+
+Remind that the goodness-of-fit can also be evaluated using a graphical 
+analysis with an exponential plot. 
+\index{exponential plot}%
+
+\subsubsection*{Use in Renext}
+%%----------------------------
+\index{exponential vs exp@{\texttt{exponential} vs \texttt{exp}}}
+The exponential can be used in \verb@Renouv@ under the two names
+\verb@"exponential"@ and \verb@"exp"@. In both cases, 
+the rate parameter $\nu$ of~(\ref{eq:defExp}) is named \verb@rate@.
+In the \verb@Renouv@ function, the choice of the distribution name 
+among the two possible ones for the exponential has consequences. 
+
+\begin{list}{$\bullet$}{ }
+\item Using \verb@distname.y = "exponential"@
+  (which corresponds to the default value), the estimation 
+  and inference will be specific to the exponential. The test of exponentiality 
+  is computed and displayed by the \verb@summary@ method for the fitted object. 
+  When no historical data are used, the exact inference described above is used
+  both for the parameter and the return levels.
+\item Using \verb@distname.y = "exp"@, the distribution of the \pkg{stats} package 
+  is used in black-box mode, as it would be with any other available distribution. Thus 
+  the inference on the parameter and the return levels is based on the asymptotic
+  normality and the delta method. 
+\end{list}
+The first possibility should obviously be preferred. In the second case, 
+the likelihood is maximised numerically, and an initial value must be given 
+using the \verb@start.par.y@ argument.
+
+
+\index{exponential distribution|)}
+
+\subsection{Generalised Pareto GPD}
+%%---------------------------------
+\label{GPDdist}
+\index{GPD (distribution)|(}
+\index{Generalised Pareto Distribution|see{GPD (distribution)}}
+
+\subsubsection*{Definition}
+%%-----------------------
+The Generalised Pareto Distribution (GPD) depends on three parameters $\mu$ (location),
+$\sigma>0$ (scale) and $\xi$ (shape). When $\xi \neq 0$, the survival function~$S(y)$
+and the density function~$f(y)$ are given by 
+\begin{equation}
+  \label{eq:defGPD}
+  S(x) = \left[ 1 + \xi \,\frac{(x-\mu)}{\sigma} \right]_{+}^{-1/\xi}
+  \qquad
+  f(x) = \frac{1}{\sigma} \left[ 1 + \xi \,\frac{(x-\mu)}{\sigma} \right]_{+}^{-1/\xi -1}  
+  \qquad x \geqslant \mu
+\end{equation}
+while the limit for $\xi \rightarrow 0$ is to be used for $\xi=0$
+$$
+   S(x) = e^{-(x-\mu)/\sigma} 
+   \qquad 
+   f(x) = \frac{1}{\sigma} \,e^{-(x-\mu)/\sigma}
+  \qquad x \geqslant \mu
+$$ 
+which is a shifted exponential distribution with rate $1/\sigma$.
+     
+The distribution  is defined for the values $x$ with $x \geqslant \mu$
+and $1 + \xi \,(x-\mu)/\sigma \geqslant 0$, that is
+\begin{center}
+   \small
+  \begin{tabular}{c | c | c}
+    $\xi < 0$ & $\xi = 0$ & $\xi >0$ \\ \hline
+   \rule{0pt}{11pt} $\mu \leqslant  x \leqslant  \mu- \sigma/\xi$ &
+    $\mu \leqslant  x < +\infty$ &
+    $\mu \leqslant  x  < +\infty$ 
+  \end{tabular}
+\end{center}
+Unlike the GEV distribution the support of $\texttt{GPD}(\mu,\,\sigma,\,\xi)$ 
+never extends to $-\infty$.
+
+\begin{figure}
+  \centering
+  \includegraphics[width=14cm]{images/GPD.pdf}
+  \caption{\label{GPDDENS} GPD densities for $\xi <0$ (left) and $\xi \geqslant 0$ (right).
+    In the $\xi < 0$ case, the parameters are chosen in order to
+    give the same support, i.e. $\mu$ and $-\sigma/\xi$ are kept constant.}
+\end{figure}
+
+The value of the shape parameter $\xi$ has a very strong impact, see
+figure~\ref{GPDDENS}.
+
+\begin{itemize}
+\item When $\xi < 0$ the distribution has a finite upper end-point. 
+  As a special case, the uniform 
+  \index{uniform distribution}%
+  distribution is obtained with $\xi = -1$. The density function
+  is decreasing for $ -1 < \xi <0$.
+  
+\item When $\xi >0$ the density is decreasing.
+  The distribution tail thickens as $\xi$ increases.
+\end{itemize}
+For most practical applications, the range of values for $\xi$ is $(-0.5,\,0.5)$.
+
+     
+\subsubsection*{Properties}
+%%---------------------
+\label{GPDPROP}
+The GPD has a finite expectation when $\xi < 1$ and a finite variance 
+when $\xi < 1/2$ then given~by
+$$ 
+    \Esp(X) = \mu + \frac{\sigma}{1-\xi}, \qquad 
+    \Var(X) = \frac{\sigma^2}{(1-\xi)^2(1-2\xi)}, \qquad
+    \textrm{CV}(Y)= \frac{1}{\sqrt{1-2\xi}}.
+$$
+The shape parameter $\xi$ can be related to the coefficient of variation.
+Note that $\xi>0$ gives $\textrm{CV}(Y)>1$.
+
+For $m>1$ the return level with period~$m$ of~(\ref{eq:MRETURN}) is
+$$ 
+    x_m = \mu + \sigma \,\left[m^\xi - 1\right]/\xi  
+$$
+It can be remarked that for any fixed $m$ the value $x_m$ is increasing
+with respect to each of the three parameters $\mu$, $\sigma$ and $\xi$
+and the same is true for the expectation. Thus increasing any of the three 
+parameters leads to a distribution with greater values.
+
+The GPD can be said to be "POT stable" in the following sense. 
+If $X \sim\texttt{GPD}(\mu,\,\sigma,\,\xi)$ then for $u \geqslant \mu$
+$$
+    \Cond{X}{X > u} \sim \texttt{GPD}(u,\,\sigma^\star,\,\xi)
+$$
+with $\sigma^\star = \sigma + \xi (u-\mu)$. In other words, the upper tail of a GPD density
+is a (unnormalized) GPD density see figure~\ref{STABEX}.
+\index{POT stability}
+
+\begin{figure}
+  \centering
+  \includegraphics[width=10cm]{images/StableGPD.pdf}
+  \caption{\label{STABEX} ``POT stability'' of the GPD family. When 
+    $X \sim \texttt{GPD}(\mu,\,\sigma,\,\xi)$ the density of $X$ conditional
+    on $X >u$ is $\texttt{GPD}(u,\,\sigma^\star,\,\xi)$ 
+    with location $u$ and the shape parameter $\xi$.
+  }
+\end{figure}
+
+
+When $\xi < 1$ the GPD corresponds to a linear mean residual life 
+\index{mean residual life}%
+$$
+    \Esp\bCond{X - v}{X > v}  = \frac{ \sigma + \xi \,v }{1 -\xi }
+$$ 
+This may be used for the determination of the threshold in POT:
+replacing the expectation by a sample mean we can check that the 
+mean excess life is linear: see \citet[chap.~4]{COLES}.
+
+From the Pickands-Balkema-de Haan theorem, if~$X$ is a random variable
+with a distribution in the domain of attraction of the GEV distribution
+with shape $\xi$, then distribution of $Y=X-u$ conditional on $X >u$ when $u$
+is large will be close to a GPD with shape $\xi$.
+%Moreover the psee theorem~4.1 in~\citet{COLES}.  
+This property provides a justification for the traditional exclusive
+use of the GPD for excesses of POT models. A simple illustration for
+the Gumbel case $\xi = 0$ is given page~\pageref{GUMBEXP}.
+
+The GPD has an infinite variance when $\xi \geqslant 1/2$. 
+In practice, the values used are generally in the range 
+$-0.3 \leqslant \xi \leqslant 0.3$.
+
+\subsubsection*{Estimation and inference}
+%%------------------------------------
+\index{constraint!inequality in MLE}
+In the POT context, the parameter $\mu$ is known since 
+it is taken as the threshold~$u$. The excesses
+$Y_i:=X_i-u$ are distributed according to the GPD with location 
+$\mu=0$ and unknown $\sigma$ and scale $\xi$.
+
+Given an ordinary sample $Y_i$ of size $n$, moments estimators for
+$\sigma$ and $\xi$ are readily available
+$$
+   \widehat{\xi}_{\texttt{mom}} = 
+   \frac{1}{2}\,\left[1 - \widehat{\textrm{CV}}^{\,-2}\right], \qquad
+   \widehat{\sigma}_{\texttt{mom}} = \frac{\bar{Y}}{2}\,\left[1 + 
+     \widehat{\textrm{CV}}^{\,-2}\right].
+$$
+\index{moment estimation}%
+The ML estimation can rely on a two-dimensional maximisation.  Interestingly enough,
+the sign of the ML estimator $\widehat{\xi}_{\texttt{ML}}$ has a simple relation with the
+empirical coefficient of variation \index{coefficient of variation}
+$\widehat{\mathrm{CV}}$. Provided that a 
+\label{SignXI}
+denominator~$n$ is used to estimate the
+variance\footnote{That is $\widehat{\Var}(Y) = \frac{1}{n} \sum_i (Y_i -
+  \overline{Y})^2$.}  in~(\ref{eq:CVTHEO}), one can show that $\widehat{\xi} <
+0$ is equivalent to $\widehat{\mathrm{CV}} < 1$.  In other words, 
+$\widehat{\xi}_{\texttt{mom}}$ and $\widehat{\xi}_{\texttt{ML}}$
+have the same sign. This shows that the sign of
+the ML estimator $\widehat{\xi}_{\texttt{ML}}$ must be interpreted with care 
+since it is not robust to outliers.
+
+It is important to note that when $\xi < 0$ the inequality $-\sigma /
+\xi > \max\{ Y_i\}$ must hold, and also that the likelihood tends to
+$\infty$ when $- \sigma / \xi \to \max\{ Y_i\}$ with $\xi <
+-1$. Therefore, a constraint $\xi \geqslant \xi_{\star}$ with
+$\xi_{\star}> -1$ should in theory be imposed in a numerical optimisation,
+although the limited precision of computations prevents from converging
+to a boundary parameter vector.
+
+%%Note that ML estimators may fail to exist for the GPD in some
+%situations.
+
+\subsubsection*{Use in Renext}
+%%----------------------------
+In \pkg{Renext}, the ML estimation of the two-parameters for an
+ordinary sample can be done using the \verb@fGPD@ function.
+\index{fGPD estimation function@{\texttt{fGPD} estimation function}}
+The estimation is carried out by using either the Lomax or the maxlo
+re-parameterisation below (see sections \ref{LOMAX} and \ref{MAXLO}),
+depending on the sign of $\widehat{\mathrm{CV}}-1$. In both cases, a
+one-dimensional maximisation is used thanks to a concentration of the
+likelihood.
+
+The GPD can be used in \verb@Renouv@ under the name \verb@"GPD"@. The 
+parameters of (\ref{eq:defGPD}) are named as those of the distribution
+names \verb@"gpd"@ the \pkg{evd} package
+$$
+   \sigma \leftrightarrow \texttt{scale}, \qquad \xi \leftrightarrow \texttt{shape}.
+$$
+Note that the parameter $\mu$ is used with the name \verb@"loc"@ in the 
+distribution functions, but should not be used in the POT context: 
+it must then be equal to its default value~$0$, since the distribution is
+fitted on the excesses~$Y_i$.
+
+The GPD can also be used under the name \verb@"gpd"@ for compatibility reasons
+and is then taken from the \pkg{evd} package. For the ordinary sample (no
+historical data) case, \textbf{Renext} then relies on the \verb@evd@
+package~\citep{PACKevd} and its \verb@fpot@ estimation function. As
+for usual functions related to the distribution (density, distribution, quantile, \dots)
+the difference between \verb@"GPD"@ and \verb@"gpd"@ is the the former returns
+\verb@NaN@ when an invalid parameter is provided , e.g. a negative value of \verb@scale@,
+while the later then produces an error. Sine the \verb@optim@ function can cope with 
+a \verb@NaN@ value for the optimised function, \verb@GPD@ is more flexible 
+than \verb@gpd@.
+\index{GPD vs gpd@{\texttt{GPD} vs \texttt{gpd}}}
+\index{GPD (distribution)|)}
+\index{evd package@{\textbf{evd} package}}
+
+\subsection{Weibull}
+%%------------------
+\index{Weibull distribution|(}
+
+\subsubsection*{Definition}
+%%-----------------------
+The Weibull distribution has a survival function~$S(y)$ and a density function~$f(y)$ given by 
+\begin{equation}
+  \label{eq:defWeibull}
+    S(y) =  e^{-\left(y/\beta\right)^\alpha}, \qquad
+  f(y) = \frac{\alpha}{\beta} \left[\frac{y}{\beta}\right]^{\alpha-1} 
+  e^{-\left(y/\beta\right)^\alpha}, \qquad
+  \qquad y \geqslant 0
+\end{equation}
+where $\alpha>0$ is the shape parameter and $\beta>0$ the scale 
+parameter. 
+
+\subsubsection*{Properties}
+%%-----------------------
+The Weibull distribution has finite moments at any order with
+$$
+  \Esp(Y) = \beta \, \Gamma(1 + 1/\alpha), \qquad
+  \Var(Y) = \beta^2 \left[\Gamma(1 + 2/\alpha) - \Gamma^2(1 + 1/\alpha)\right], \qquad
+  \textrm{CV}(Y) = \sqrt{\frac{\Gamma(1 + 2/\alpha)}{\Gamma^2(1 + 1/\alpha)} - 1}.
+$$
+The coefficient of variation is strictly decreasing with respect 
+to $\alpha$ and takes the value $1$ in the exponential case $\alpha = 1$.
+For $\alpha = 0.2$ the CV is about $15.8$ so only values $\alpha > 0.2$
+are used in practice.
+
+The properties of the Weibull depend on the shape parameter $\alpha>0$. 
+
+\begin{list}{$\bullet$}{\setlength{\itemsep}{2pt}\setlength{\topsep}{2pt}}
+  
+\item When $0 < \alpha < 1$, the hazard rate decreases to the
+  limit~$0$, and the mean residual life MRL is increasing.
+  
+\item When $\alpha = 1$ the distribution is exponential with
+  constant hazard rate and constant MRL.
+  
+\item When $\alpha > 1$ the distribution has an increasing hazard rate
+  and decreasing MRL.
+
+\end{list}
+See~\citet{BAGNOLIBERGSTROM}.
+
+The return level of period $m>1$ is given by $y_m = \beta \,\left[\log
+  m\right]^{1/\alpha}$, confirming that the exponential return level
+curve $[\log m,\, y_m]$ is convex (concave upwards) for $0 < \alpha <
+1$ and (downwards) concave for $\alpha > 1$.
+
+The Weibull distribution is closely related to the exponential.  When
+$Y$ is Weibull with shape $\alpha$ the random variable
+$Z=Y^{1/\alpha}$ has an exponential distribution.  Thus when $Y$
+follows a Weibull distribution $V=-\log Y$ has a Gumbel distribution.
+
+\subsubsection*{Estimation and inference}
+%%------------------------------------
+The ML estimation is carried out by concentrating the scale parameter
+\index{concentration, likelihood}
+out of the likelihood. It can be shown that with a suitable re-parameterisation
+the concentrated likelihood  is a log-concave function having an unique maximum
+easily obtained through a one-parameter maximisation.
+Moreover the expected information matrix can be given in closed form. 
+These tips are used in \textbf{Renext}.
+\index{information matrix!expected}%
+
+The moment estimators are not available in closed form and they can be
+obtained only at nearly the same cost as the ML estimators.
+
+
+\subsubsection*{Goodness-of-fit}
+%%----------------------------
+Specific tests exist for Weibull distributions but are not implemented
+in \textbf{Renext}. The fit can be controlled graphically
+with a\textit{ Weibull plot} 
+\index{Weibull plot}% 
+such as produced by the \verb@weibplot@ function.
+
+\subsubsection*{Use in Renext}
+%%----------------------------
+The Weibull distribution  can be used in \pkg{Renext} under the name \verb@"weibull"@. The 
+parameters of (\ref{eq:defWeibull}) are named as in the \verb@stats@ package from
+which the distribution functions are taken
+$$
+   \beta \leftrightarrow \texttt{scale}, \qquad \alpha \leftrightarrow \texttt{shape}.
+$$
+The ML estimation with likelihood concentration is available in the 
+\verb@fweibull@ function.
+\index{fweibull estimation function@{\texttt{fweibull} estimation function}}
+
+This distribution can be used in \verb@Renouv@ as a special 
+distribution. It is not necessary to provide initial values for the ML estimation since 
+specific initial values are used then in \verb@Renouv@.
+
+\index{Weibull distribution|)}
+
+\subsection{Gamma}
+%%-------------------
+\index{gamma distribution|(}
+\subsubsection{Definition}
+%%-----------------------
+The gamma distribution  has density
+\begin{equation}
+  \label{eq:defGamma}
+  f(y) = \frac{1}{\Gamma(\alpha) \,\beta^\alpha} \,y^{\alpha-1} e^{-y/\beta} \qquad y \geqslant 0
+\end{equation}
+where $\Gamma(\alpha)$ denotes the Euler's gamma function,
+$\beta>0$ is the scale parameter and $\alpha>0$ is the shape parameter.
+The distribution function~$F(y)$ and the survival~$S(y)$ do not have a simple expression.
+
+\subsubsection{Properties}
+%%-----------------------
+Expectation, variance and coefficient of variation are given by
+$$
+   \Esp(Y)= \alpha \beta, \qquad \Var(Y) = \alpha \beta^2, \qquad
+   \textrm{CV}(Y) = \frac{1}{\sqrt{\alpha}}.
+$$
+The shape parameter $\alpha$ is related to the coefficient of variation
+and $0 < \alpha < 1$ gives $\textrm{CV}(Y)>1$.
+
+\smallskip
+The properties of the distribution depend on the shape parameter 
+$\alpha>0$.
+
+\begin{list}{$\bullet$}{\setlength{\itemsep}{2pt}\setlength{\topsep}{2pt}}
+
+\item For $0 < \alpha < 1$ the hazard rate decreases to the limit
+  $1/\beta$ and the mean residual life MRL increases to the limit~$\beta$
+
+\item For $\alpha=1$ the distribution is the exponential with constant
+  hazard and constant MRL,
+
+\item For $\alpha>1$ the hazard rate increases to the limit $1/\beta$
+  and the MRL decreases to the limit $\beta$.
+
+\end{list}
+See~\cite{BAGNOLIBERGSTROM}.
+
+The gamma distribution is not frequently used to describe extremes,
+maybe because it nearly boils down to an exponential with rate $1/\beta$ for
+large return periods. In the decreasing hazard case $0 < \alpha < 1$,
+it can be considered as a continuous mixture of exponentials with
+rates $\lambda > 1/\beta$. 
+\index{mixture of exponentials!continuous}
+
+It can be shown that the gamma distribution falls in the domain of
+attraction of the Gumbel distribution.  It is a light-tailed
+distribution.
+
+\subsubsection{Estimation}
+%%-----------------------
+Using an ordinary sample~$Y_i$ the moment estimators are readily available
+$$
+   \widehat{\alpha}_{\texttt{mom}} = \widehat{\textrm{CV}}^{-\,2}, \qquad
+   \widehat{\beta}_{\texttt{mom}} = \bar{X}\times \widehat{\textrm{CV}}^{\,2},
+$$
+\index{moment estimation}%
+and these could be used as initial values for a numerical likelihood maximisation. 
+
+As in the Weibull case, it is possible to concentrate
+the likelihood and thus to solve a one-parameter maximisation
+\index{concentration, likelihood}
+problem. Moreover, the maximisation can be reduced to that of a concave 
+function, and the \textit{expected} information matrix can be computed. 
+\index{information matrix!expected}%
+
+\subsubsection*{Use in Renext}
+%%----------------------------
+The gamma distribution  can be used in \pkg{Renext} under the name \verb@"gamma"@. The 
+parameters of (\ref{eq:defGamma}) are named as in the \verb@stats@ package from
+which the distribution functions are taken
+$$
+   \beta \leftrightarrow \texttt{scale}, \qquad \alpha \leftrightarrow \texttt{shape}.
+$$
+The ML estimation with likelihood concentration is available in the 
+\verb@fgamma@ function.
+
+\index{fgamma estimation function@{\texttt{fgamma} estimation function}}
+
+
+It is not necessary to provide initial values for the ML estimation since 
+specific initial values are used then in \verb@Renouv@.
+
+
+\index{gamma distribution|)}
+
+\subsection{Log-normal}
+%%---------------------
+\index{log-normal distribution|(}
+
+\subsubsection{Definition}
+%%-----------------------
+The log-normal distribution is the distribution of~$e^V$ where $V$ is normal. It
+has density
+\begin{equation}
+  \label{eq:defLogNorm}
+  f(y) = \frac{1}{y\,\sigma \sqrt{2\pi}}\, 
+  \exp\left\{-\frac{1}{2\sigma^2} \,\left[ \log y - \mu \right]^2 \right\} \qquad y > 0,
+\end{equation}
+where $\mu$ and $\sigma>0$ are the parameter of the normal distribution of $\log Y$.
+The distribution function~$F(y)$ and the 
+survival~$S(y)$ do not have simple expression.
+
+Note that these parameters are not the location nor the scale parameter since they
+are in the logged scale. 
+
+\subsubsection{Properties}
+%%-----------------------
+The expectation, variance and coefficient of variation of the log-normal distribution are
+$$
+  \Esp(Y) = e^{\mu + \sigma^2/2}, \qquad \Var(Y) = \left[e^{\sigma^2} - 1\right] \,e^{2\mu + \sigma^2},
+  \qquad \textrm{CV}(Y) = \sqrt{e^{\sigma^2} - 1}.
+$$
+For the log-normal distribution neither the hazard $h(y)$ nor the mean residual
+life $\textrm{MRL}(y)$ are monotonous functions. The mean residual life~$\textrm{MRL}(y)$ is 
+reputed\footnote{No proof of this assertion was found.} to be decreasing for large values of~$y$. 
+
+\subsubsection{Estimation and inference}
+%%-------------------------------------
+The ML estimation from an ordinary sample is straightforward using 
+the log transformation which leads to the normal case. 
+Exact inference is also available for the parameters. 
+
+However, exact inference for the return levels
+or return periods is more complicated. Hence the standard numerical
+"delta method" is used in \textbf{Renext}.
+
+\subsubsection{Goodness-of-fit}
+%%----------------------------
+The fit of the log-normal distribution can be assessed using the 
+logged values and a normality test (e.g. Shapiro-Wilk). 
+Since the log-normal is not frequently used in POT, such a test is
+not in computed in \textbf{Renext}.
+
+\subsubsection*{Use in Renext}
+%%----------------------------
+The log-normal distribution  can be used in \pkg{Renext} under the name \verb@"lnorm"@. The 
+parameters of (\ref{eq:defLogNorm}) are named as in the \verb@stats@ package from
+which the distribution functions are taken
+$$
+   \mu \leftrightarrow \texttt{meanlog}, \qquad \sigma \leftrightarrow \texttt{sdlog}.
+$$
+It is not necessary to provide initial values for the ML estimation since 
+specific initial values are used then in \verb@Renouv@.
+
+\index{log-normal distribution|)}
+
+
+\subsection{Finite mixture of exponentials}
+%%--------------------------------
+\index{mixture of exponentials!finite|(}
+\subsubsection*{Definition}
+%%-----------------------
+The finite mixture of exponentials is a distribution with density
+(or survival) function obtained as a weighed mean of a finite number
+of exponential densities (or survivals) with  different rates. 
+For a mixture of two exponentials, the survival function~$S(y)$  
+and density~$f(y)$ are given by
+\begin{equation}
+  \label{eq:defMixExp2}
+   S(y) = \alpha_1\,e^{-\lambda_1 y} + (1-\alpha_1)\,e^{-\lambda_2 y}, \qquad
+   f(y) = \alpha_1\lambda_1\,e^{-\lambda_1 y} + (1-\alpha_1)\lambda_2\,e^{-\lambda_2 y},
+   \qquad y \geqslant 0
+\end{equation}
+and the parameters are $\alpha_1$, $\lambda_1$ and $\lambda_2$ must verify
+\begin{equation}
+   \label{eq:MIXEXPCONTR}
+   0 < \alpha_1 < 1 \qquad 0 < \lambda_1 < \lambda_2.
+\end{equation}
+It can be preferable to use the alternative parameter vector
+$[\alpha_1,\, \lambda_1, \, \delta]^\top$ with $\delta := \lambda_2-
+\lambda_1$, since the constraint $\lambda_1 < \lambda_2$ is replaced
+then by the simple constraint~$\delta >0$.
+
+
+The usual interpretation of a mixture applies: the distribution is
+that of a random variable that would be randomly chosen from the
+exponential with rate $\lambda_1$ or from the exponential with rate
+$\lambda_2$ the respective probabilities being $\alpha_1$ and
+$1-\alpha_1$.  In survival analysis the mixture components correspond
+to two death rates that may result from two causes of mortality or
+from the existence of two sub-populations.
+
+
+\subsubsection*{Properties}
+%%-----------------------
+The expectation and uncentered moments have a simple form
+$$
+   \Esp(Y^\gamma) = \alpha_1/\lambda_1^\gamma + (1-\alpha_1)/\lambda_2^\gamma
+$$
+for any $\gamma>0$. The coefficient of variation is always greater
+than~$1$.
+
+For large values of $y$, the survival~$S(y)$ only depends on the
+smallest rate~$\lambda_1$, since
+\begin{equation}
+    \label{eq:MIXEXPAPP}
+    S(y) \underset{y \rightarrow +\infty}{\sim} \alpha_1 \,e^{-\lambda_1 y}.
+\end{equation}
+The survival analysis context provides a simple interpretation: after
+a large time~$y$, the sub-population with smaller death rate
+$\lambda_1$ dominates, and the mean residual life therefore increases.
+
+\begin{figure}
+  \centering
+  \includegraphics[width=8cm]{images/MixExp2.pdf}
+  \caption{\label{MIXEXP} Exponential plot for the distribution
+    function of a mixture of two exponentials. The curve shows the
+    cumulative hazard $H(y) = -\log[1-F(y)]$.
+    The slope of the tangent to the curve
+    at the origin is the weighed mean rate~$\lambda = \alpha_1 \lambda_1 + (1-\alpha_1) \lambda_2$. 
+    The slope of the asymptote is $\lambda_1$.  Note that $\lambda_1 < \lambda < \lambda_2$.
+   }
+\end{figure}
+
+It can be shown that the hazard rate function $h(y)$ is decreasing with
+a limit $\lambda_1$, and that the mean excess life is increasing with 
+a finite limit $1/\lambda_1$. This "rejuvenation effect" results from 
+the progressive extinction of the population having the highest death
+rate $\lambda_2$. The cumulative hazard $H(y)$ is concave, see 
+figure~\ref{MIXEXP}.
+
+The quantile function is not available in closed form and must be
+computed numerically.
+
+\subsubsection*{Estimation and inference}
+%%------------------------------------
+Note that the model would be unidentifiable if the second
+constraint of~(\ref{eq:MIXEXPCONTR}) was omitted since the
+distribution is invariant under the transformation
+$$
+   [\alpha_1,\,\lambda_1,\,\lambda_2] \rightarrow [1-\alpha_1,\,\lambda_2,\,\lambda_1].
+$$
+For an ordinary sample $Y_i$ the ML estimation can be done using
+Expectation-Maximisation (EM)
+\index{Expectation-Maximisation}%
+algorithm.  In this approach, each data $Y_i$ is associated to a
+latent variable $Z_i$ with value $z=1$ or $z=2$ indicating the group
+(or sub-population) for observation~$i$ and consequently the rate
+$\lambda_z$.
+%%When the $Z_i$
+%are known, ML estimation of parameters is easy (the rates are weighted mean).
+%%An iterative procedure computes the expectation of the $Z_i$ and 
+
+In \textbf{Renext} the standard log-likelihood maximisation is used. 
+Initial values are computed using the moments when possible, or
+using~(\ref{eq:MIXEXPAPP}): regressing
+$\log S(y)$ against $y$ for large values of $y$ give 
+$-\log \alpha_1$ (intercept) and $\lambda_1$ (slope), see figure~\ref{MIXEXP}. 
+Then $\lambda_2$ can be deduced from the sample mean. However
+care is needed since these estimates may not fulfil the constraint requirements. 
+
+\subsubsection*{Generalisation}
+%%------------------------
+A  mixture of $m$ exponentials ($m \geqslant 2$) can be defined through
+$$ 
+   S(y) = \sum_{i=1}^m \alpha_i\,e^{-\lambda_i y}, \qquad 
+   f(y) = \sum_{i=1}^m \alpha_i\lambda_i\,e^{-\lambda_i y}, \qquad 
+   y \geqslant 0
+$$
+with constraints $0 < \alpha_i < 1$, $\sum_i \alpha_i =1$ and 
+$0 < \lambda_1 < \lambda_2 < \dots < \lambda_m$
+Since the parameter $\alpha_m$ can be dropped as in the $m=2$ case,
+the distribution depends on $2m-1$ free parameters.
+The behaviour for large~$y$ results from~(\ref{eq:MIXEXPAPP}) which still applies.
+
+The mixture of exponentials is sometimes called \textit{hyper-exponential distribution}.
+\index{hyper-exponential distribution}
+
+\subsubsection*{Use in Renext}
+%% ---------------------------
+The mixture of exponential distributions  can be used in \pkg{Renext} under the name 
+\verb@"mixexp2"@, and is currently limited to~$m=2$ exponentials.  
+The distribution functions (including the quantile function) are provided
+by \pkg{Renext} and use the following names for the  parameters of~(\ref{eq:defMixExp2})
+$$
+   \alpha_1 \leftrightarrow \texttt{prob1}, \qquad \lambda_1 \leftrightarrow \texttt{rate1},
+   \qquad \delta= \lambda_2 - \lambda_1 \leftrightarrow \texttt{delta}.
+$$
+It is not necessary to provide initial values for the ML estimation since 
+specific initial values are used then in \verb@Renouv@.
+
+The ML-based inference for the mixture of exponentials is well known to be 
+difficult, and bayesian inference might be a valuable alternative.
+
+
+\index{mixture of exponentials!finite|)}
+
+\subsection{Lomax}
+%%========================
+\label{LOMAX}
+\index{Lomax distribution|(}%
+
+\subsubsection*{Definition}
+%%-----------------------
+The \textit{Lomax} distribution depends
+on two parameters $\beta>0$ (scale) 
+and $\alpha>0$ (shape)  with survival and density functions
+\begin{equation}
+  \label{eq:SLomax}
+  S(y) = \left[1 + \frac{y}{\beta} \right]^{-\alpha}, 
+  \qquad
+  f(y) = \frac{\alpha}{\beta}\, \left[1 + \frac{y}{\beta} \right]^{-\alpha-1},
+  \qquad y > 0.
+\end{equation}
+This distribution is also known as \textit{Pareto distribution of the second
+kind}~\citep{CONTI1}.
+\index{Pareto distribution of the second kind}%
+When $Y$ is a random variable following this distribution, 
+$X= Y +\beta$ is Pareto with minimum~$x_0 =\beta$
+and shape~$\alpha$, that is 
+$$
+   S_X(x) = \left[\frac{x_0}{x} \right]^\alpha, \qquad x > x_0.
+$$
+\index{Pareto distribution}%
+The Pareto distribution with minimum $x_0$ and
+shape $\alpha$ is a special case of $\texttt{GPD}(\mu,\,\sigma,\,\xi)$ with 
+location $\mu = x_0$, shape $\xi=1/\alpha$ (positive) and the 
+extra constraint $\sigma/\xi = x_0$.
+The Lomax distribution is the special case of the Generalised Pareto 
+$\texttt{GPD}(\mu,\,\sigma,\,\xi)$ with $\mu=0$,
+$\sigma = \beta/\alpha$ and $\xi = 1/\alpha$, thus
+implying a positive shape parameter~$\xi$.
+\index{fixed parameter values}
+
+We can rewrite the distribution function of~$Y$ in the
+form~(\ref{eq:BOXCOXED}) below, with $\phi_\alpha(z) \equiv \log z$,
+i.e. with the Box-Cox transformation~(\ref{eq:BOXCOXdef}) for $\alpha
+=0$. Therefore, the Lomax distribution can be considered as a limit
+case of the Shifted Left Truncated Weibull SLTW. We may speak of
+\textit{log-exponential distribution} although the expression is
+ambiguous.  
+
+\index{log-exponential distribution}%
+
+\subsubsection*{Properties}
+%%-----------------------
+The quantile function is available in closed form.
+The expectation is finite only for $\alpha > 1$ and the variance is finite 
+only for $\alpha>2$.
+In this case
+$$
+   \Esp(Y) = \frac{\beta}{\alpha-1},   \qquad 
+   \Var(Y) = \frac{\alpha \,\beta^2}{(\alpha-1)^2(\alpha-2)}, \qquad
+   \textrm{CV}(Y) = \sqrt{\frac{\alpha}{\alpha-2}} >1.
+$$
+Only the cases with $\alpha>2$ seem practicable. Then $\textrm{CV}(Y)$
+will be close to~$1$ for a large shape~$\alpha$.
+
+The Lomax distribution has a decreasing hazard rate and a linearly
+increasing Mean Residual Life.
+
+If both $\alpha$ and $\beta$ tend to $\infty$ with $\alpha/\beta$
+tending to $\lambda >0$ then the Lomax distribution tends to the
+exponential with rate $\lambda$.
+
+It can be shown that this distribution
+is a (continuous) gamma mixture of exponentials.  
+\index{mixture of exponentials!continuous} 
+More precisely, the survival of~(\ref{eq:SLomax}) can
+be written as
+$$ 
+S(y) = \int_{0}^{+\infty} g(\lambda) \, e^{-\lambda y}
+\,\mathrm{d}\lambda
+$$
+\index{gamma distribution}%
+where $g(\lambda)$ is the density of the gamma distribution with shape
+$\alpha_{\texttt{gam}}:=\alpha$ and scale $\beta_{\texttt{gam}} := 1/\beta$. The
+survival $S(y)$ is thus the weighed mean of the exponential survivals
+$e^{-\lambda y}$ with the weight function $g(\lambda)$. Contrary to 
+the finite mixture of exponentials which behaves for large return periods 
+as does its component with the smallest rate~(\ref{eq:MIXEXPAPP}), 
+this continuous mixture is heavy tailed. The reason is that
+$g(\lambda)$ weights small rates $\lambda \approx 0$, and thus the mixture 
+embeds exponentials with arbitrarily large means~$1/\lambda$. The survival function is a 
+\textit{completely monotone} function \citep{FELLER2}.
+\index{completely monotone function}
+
+\subsubsection*{Estimation}
+%%-----------------------
+When the two parameters $\beta>0$ and $\alpha>0$ are unknown, the ML
+estimators from an ordinary sample $Y_i$ can be found using a
+one-dimensional optimisation by concentrating the shape parameter~$\alpha$ out
+\index{concentration, likelihood}
+of the likelihood. Although the concentrated log-likelihood
+$\ell_{\texttt{c}}(\beta)$ is not concave, it can be proved to have a
+maximum\footnote{Our proof states that a global maximum exists, but
+  not that it is unique.} when 
+the sample $\textrm{CV}$ is
+greater than~$1$.  Moreover the expected information matrix is
+available in closed form~\citep{LomaxBias}.  The ML estimates fail to exist when the
+sample coefficient of variation $\textrm{CV}$ is less than~$1$. The
+estimation may also fail when $\textrm{CV}$ is greater than, yet close
+to~$1$.
+\index{information matrix!expected}%
+
+When $\beta$ is known, the estimation boils down to that of the 
+exponential distribution since $V:= \log[1 + Y/\beta]$ then follows
+an exponential distribution with rate~$\alpha$.
+
+%%Exact inference is available, 
+%%but is not implemented as such in \textbf{Renext} with the \verb@spareto@
+%%distribution. 
+
+\subsubsection*{Use in Renext}
+%%---------------------------
+This distribution is provided in \pkg{Renext} under the name \verb@"lomax"@. The
+names of the formal arguments for the parameters in the probability functions are
+\begin{center}
+  $\beta \leftrightarrow$ \verb@scale@, \qquad
+  $\alpha \leftrightarrow$ \verb@shape@. 
+\end{center}
+The ML estimation with likelihood concentration 
+is available in the \verb@flomax@ function. This function rescales the 
+data to avoid numerical problems.
+\index{rescaling (data)}
+\index{flomax estimation function@{\texttt{flomax} estimation function}}
+
+This distribution is recognized as special in \verb@Renouv@, thus providing a simple
+mean to impose the constraint $\xi>0$ for excesses assumed to
+follow $\texttt{GPD}(0,\,\sigma,\,\xi)$. 
+
+Estimation and exact inference are possible in the case where the
+shift $\beta$ is taken as the (known) threshold i.e. $\beta =
+u$. The exponential distribution should then be used with a
+logarithmic transformation as explained below in~\ref{TRANSEXP}. The
+two formal arguments and values to use in the \verb@Renouv@ call
+are \verb@distname.y = "exponential"@ and \verb@trans.y = "log"@. Note that
+$\alpha$ is then obtained with the name \verb@"rate"@, and its estimated value
+will be greater than~$1$.
+\index{Lomax distribution|)}
+
+
+\subsection{Maxlo}
+%%========================
+\label{MAXLO}
+\index{maxlo distribution|(}%
+\subsubsection*{Definition}
+%%-----------------------
+Though very useful in POT models, this distribution does not seem  
+to have deserved its own name yet. We decided to call it "maxlo" as a pun 
+inspired by a kind of symmetry to the Lomax distribution.
+
+The \textit{maxlo} distribution depends on two parameters $\beta>0$ (scale) 
+and $\alpha>0$ (shape). The support of the distributions is $[0,\,\beta]$ 
+and the survival and density functions are
+\begin{equation}
+  \label{eq:Smaxlo}
+  S(y) = \left[1 - \frac{y}{\beta} \right]^{\alpha}, 
+  \qquad f(y) = \frac{\alpha}{\beta}\,\left[1 - \frac{y}{\beta} \right]^{\alpha-1} \qquad 0 < y < \beta.
+\end{equation}
+The maxlo  distribution is the special case of the Generalised Pareto 
+$\texttt{GPD}(\mu,\,\sigma,\,\xi)$ with $\mu=0$,
+$\sigma = \beta/\alpha$ and $\xi = -1/\alpha$, thus
+implying a \textit{negative shape}~$\xi$.
+\index{fixed parameter values}
+
+\subsubsection*{Properties}
+%%-----------------------
+The quantile function is available in closed form.  
+This distribution has finite moments of any order and
+$$
+\Esp(Y) = \frac{\beta}{\alpha+1},   \qquad 
+\Var(Y) = \frac{\alpha \,\beta^2}{(\alpha+1)^2(\alpha+2)}, \qquad
+\textrm{CV}(Y) = \sqrt{\frac{\alpha}{\alpha + 2}} < 1.
+$$
+Note that $\textrm{CV}(Y)$ will be close to $1$ for large values of
+the shape~$\alpha$.
+
+If both $\alpha$ and $\beta$ tend to $\infty$ with $\alpha/\beta$ tending to 
+$\lambda >0$ then the maxlo distribution tends to the exponential with rate $\lambda$.
+
+\subsubsection*{Estimation}
+%%-----------------------
+\index{constraint!inequality in MLE}
+When the two parameters $\beta>0$ and $\alpha>0$ are unknown, the ML estimators
+from an ordinary sample $Y_i$ can be found using a one-dimensional optimisation
+by concentrating the shape parameter~$\alpha$ out of the likelihood. Note
+that the inequality constraint $\beta>\max \{Y_i\}$ must hold and that the 
+likelihood tends to $\infty$ when $\beta \to \max \{Y_i\}$ with $\alpha < 1$.
+So in practice an inequality $\alpha \geqslant \alpha_{\texttt{L}}$ must
+be imposed for some $\alpha_{\texttt{L}} > 1$.
+
+Although \index{concentration, likelihood} the concentrated
+log-likelihood $\ell_{\texttt{c}}(\beta)$ is not concave it can be
+proved to have a maximum\footnote{Our proof states the existence of
+  local maximum.} when the sample $\textrm{CV}$ is smaller than~$1$,
+thus mirroring the property stated for the Lomax distribution.
+Moreover the expected information matrix is available in closed form.
+The ML estimates fail to exist when the sample coefficient of
+variation $\textrm{CV}$ is greater than~$1$. The estimation may also
+fail when $\textrm{CV}$ is smaller than yet close to~$1$.
+\index{information matrix!expected}%
+
+
+
+When $\beta$ is known, the estimation boils down to that of the 
+exponential distribution since $V:= -\log[1 - Y/\beta]$ follows
+an exponential distribution with rate~$\alpha$.
+
+
+%%Exact inference is available, 
+%%but is not implemented as such in \textbf{Renext} with the \verb@spareto@
+%%distribution. 
+
+\subsubsection*{Use in Renext}
+%%---------------------------
+This distribution is provided in \pkg{Renext} under the name \verb@"maxlo"@. The
+names of the formal arguments for the parameters in the probability functions are
+\begin{center}
+  $\beta \leftrightarrow$ \verb@scale@, \qquad
+  $\alpha \leftrightarrow$ \verb@shape@. 
+\end{center}
+The ML estimation with likelihood concentration 
+is available in the \verb@fmaxlo@ function.
+\index{fmaxlo estimation function@{\texttt{fmaxlo} estimation function}}
+This function rescales the 
+data to avoid numerical problems.
+\index{rescaling (data)}
+
+This distribution can be used in \verb@Renouv@, thus providing a simple
+mean to impose the constraint $\xi<0$ for excesses assumed to
+follow $\texttt{GPD}(0,\,\sigma,\,\xi)$. 
+
+\index{maxlo distribution|)}
+
+
+
+\subsection{Transformed Exponential distributions}
+%%============================================
+\label{TRANSEXP}
+\index{transformed exponential|(}
+\subsubsection*{Definition}
+%%----------------------
+This rather informal family of distributions is sometimes used in hydrology.
+Although we will only consider in practice the two functions 
+$\phi(x) = x^2$ and $\phi(x) = \log x$ both for $x>0$,
+a slightly more general framework can be proposed as follows. 
+Let $\phi(x)$ be a regular and strictly increasing function
+defined for $x > x_0$ and let $u$ be a known value $u > x_0$. When a random
+variable
+$X$ is such that
+$$ 
+   \phi(X) - \phi(u) \sim \texttt{Exp}
+$$
+we may say that $X$ has a \textit{transformed exponential} distribution. 
+The values of this distribution are the real numbers~$x$ with $x>u$.
+Note that the transformation needs to be one-to-one, because the distribution 
+of $X$ must be determinable from that of $Z=\phi(X) - \phi(u)$. Then
+$$ 
+    X = \psi\left(Z + \phi(u)\right)
+$$
+where $\psi(z)$ is the reciprocal function of $\phi(x)$.
+As an example, the square transformation can be applied only for~$x>0$.
+
+The survival function is given by 
+$$ 
+   S_X(x) =  \exp\left\{-\nu \left[ \phi(x) - \phi(u) \right]\rule{0pt}{0.9em}\right\}
+   \qquad x > u
+$$
+where $\nu>0$ is the rate of the exponential distribution. The density comes 
+by derivation.
+
+\subsubsection*{Properties}
+%%-----------------------
+The properties of the distribution obviously depend on the choice of the 
+transformation. 
+\begin{list}{$\bullet$}{ }
+  \item For the square transformation $\phi(x) = x^2$ we get a 
+    shifted and truncated Weibull distribution as described below. It
+    may be called \textit{square-exponential} or (in french) \textit{loi en carr\'e}. 
+    \index{square-exponential distribution} 
+    \index{loi en carres@{\textit{loi en carr\'e}}}
+  \item With  the logarithmic  transformation $\phi(x) = \log x$ we get a shifted version 
+    of the Pareto (heavy tailed) distribution called Lomax distribution 
+    and  described above in~\ref{LOMAX}. It
+    may  be called \textit{log-exponential}. 
+    \index{log-exponential distribution} 
+  \end{list}
+The quantile function is available in closed form provided that the
+reciprocal function $\psi(z)$ is such.  This is actually the 
+case for the two transformations considered.
+
+
+\subsubsection*{Estimation and inference}
+%%-------------------------------------
+As far as an ordinary sample $X_i$ is used, the ML  estimator~$\widehat{\nu}$ of 
+the rate~$\nu$ is available  using the mean  of the transformed 
+random variables~$Z_i = \phi(X_i)-\phi(u)$
+$$ 
+    1/\widehat{\nu} = \bar{Z} = \overline{\phi(X})-\phi(u)
+$$ 
+Exact inference on $\nu$ is deduced from the exponential case.
+
+\subsubsection*{Use in Renext}
+%%---------------------------
+The package allows the use of two transformed exponential 
+distributions with the \verb@Renouv@ function, 
+where $u$ \textit{is necessarily taken as equal to
+the threshold}. The value given for the  transformation formal 
+argument \verb@trans.y@  can be 
+either \verb@"square"@ or \verb@"log"@. 
+In both cases, the exponential distribution must be specified by giving
+the value \verb@"exponential"@ to the distribution argument 
+\verb@distname.y@.
+
+\index{transformed exponential}
+
+\subsection{Shifted Left Truncated  Weibull (SLTW) distribution}
+%%============================================
+\label{SLTW}
+\subsubsection*{Definition}
+%%--------------------- 
+We call (shifted) \textit{left truncated Weibull} (SLTW) the following 
+distribution for a random variable~$Y > 0$. 
+\index{SLTW distribution}
+\index{shifted left truncated Weibull|see{SLTW}}
+It depends  on three parameters  $\delta>0$ (shift or location), $\beta>0$ (scale) 
+and $\alpha >0$ (shape) and has survival function 
+\begin{equation}
+  \label{eq:SLTWF}
+  S(y) =  
+  \exp\left\{- \left[ \left(\frac{y+\delta}{\beta} \right)^\alpha 
+      -\left(\frac{\delta}{\beta}\right)^\alpha \right] \right\} 
+  \qquad y > 0 
+\end{equation}
+The density comes by derivation.  This is the conditional distribution 
+$\Cond{X-\delta}{X>\delta}$ where $X$ has Weibull distribution with shape $\alpha$ and scale 
+$\beta$. \index{Weibull distribution}
+
+For $\alpha=2$ we can rewrite the survival as
+$$
+   S(y) = \exp\left\{-\nu \left[(y+\delta)^2 - {\delta}^2 \right]\right\} 
+   \qquad y > 0
+$$
+thus the distribution is identical to the square-exponential described previously.
+\index{square-exponential distribution}
+\index{loi en carres@{\textit{loi en carr\'e}}}
+
+\begin{figure}
+  \centering
+  \includegraphics[width=10cm]{images/SqExp.pdf}
+  \caption{\label{SQEXP}
+    "Square exponential" densities, i.e. SLTW densities with shape 
+    $\alpha=2$. 
+    Only the part $y \geqslant 0$ of the Weibull densities is used and the normalisation
+  is on the interval $y \geqslant 0$.}
+\end{figure}
+
+
+This three parameter family can be used for excesses in POT, but 
+in a general framework there is no natural choice for $\delta>0$ in relation
+with a physical threshold~$u$, though the two quantities have the
+same physical dimension. For some applications of POT where the random 
+variable is 
+positive $\delta$ is sometimes chosen as the threshold $\delta = u$.
+
+\subsubsection*{Properties}
+%%-----------------------
+%% The three parameter family is (by construction) POT stable for positive thresholds. 
+The moments or even the expectation are not easily computed in the general 
+case.  
+%% \index{POT stability}
+
+For $\alpha \leqslant 1$ the mode of $Y$ is always $y=0$. For $\alpha>1$  the mode of
+$Y$ is the positive part $y_+^\star$ of the shifted mode $y^\star$ of the Weibull i.e.
+$y^\star = \left(\alpha - 1\right)^{1/\alpha}\beta - \delta$. 
+Thus for a fixed $\alpha$ and $\delta$ we can
+have a mode varying with~$\beta$.
+
+The quantile function is available in closed form. 
+The hazard and the MRL for this distribution are merely truncations
+of their equivalent for the Weibull distribution, e.g. the hazard is 
+decreasing for $0 \leqslant \alpha <1$ and 
+increasing for $\alpha>1$.
+
+For $\alpha>0$ and large~$\delta$, the 
+distribution is close to the exponential since the Weibull distribution
+is in the domain of attraction of the Gumbel distribution for which the 
+excesses over a large threshold tend to be exponentially distributed.
+
+Using the notation $\rho = \alpha/\beta^\alpha$ we can
+rewrite the survival as
+\begin{equation}
+    \label{eq:BOXCOXED}
+    S(y) = 
+    \exp \left\{ - \rho\, \left[ 
+        \phi_\alpha(y + \delta)
+          -\phi_\alpha (\delta)  
+        \right] \right\} \qquad y > 0, 
+\end{equation}
+where $\phi_\alpha(z)$ is the Box-Cox transformation defined for $z>0$ by
+\begin{equation}
+  \label{eq:BOXCOXdef}
+   \phi_\alpha(z) = 
+   \begin{cases} 
+     (z^\alpha - 1)/\alpha & \alpha > 0\\
+     \log z                & \alpha = 0. 
+   \end{cases}
+\end{equation}
+The function $\phi_\alpha(z)$ is strictly increasing with limit $+\infty$ when 
+$z \rightarrow +\infty$ and it is regular with respect 
+to~$\alpha$ for $\alpha=0$.
+Thus if $\alpha$ and $\beta$ both
+tend to zero in such way that $\rho$ tends to a limit $\rho^\star>0$ the
+distribution tends to the Lomax distribution described above. The
+limit survival is~(\ref{eq:BOXCOXED}) with $\alpha=0$ and 
+$\rho=\rho^\star$.
+
+
+\subsubsection*{Estimation}
+%%------------------------
+In most contexts, the shift parameter $\delta$ should be known and given. 
+
+Note that when  both $\alpha$ and $\delta$ are known and
+when the estimation is from an ordinary sample $Y_i$ of size~$n$,
+the ML estimator~$\widehat{\rho} = \alpha/\beta^\alpha$ of~$\rho$ is available 
+using the mean of the transformed $Y_i$
+$$ 
+    1/\widehat{\rho} = \overline{\phi_\alpha(Y+\delta)}-\phi_\alpha(\delta)
+$$ 
+Exact inference on $\rho$ or on the quantiles is then easily deduced from the exponential case.
+\index{exact inference}
+
+\subsubsection*{Use in Renext}
+%%---------------------------
+The SLTW distribution is provided in \pkg{Renext} under the name \verb@SLTW@.
+The relevant probability functions share the three following formal 
+arguments for the parameters, in correspondence with~(\ref{eq:SLTWF})
+\begin{center}
+  $\delta \leftrightarrow$ \verb@delta@, \qquad
+  $\alpha \leftrightarrow$ \verb@shape@, \qquad
+  $\beta \leftrightarrow$ \verb@scale@. 
+\end{center}
+Note that the parameter named \verb@scale@ \textit{is not} a scale parameter in the 
+usual statistical sense; the name only refers to the original Weibull distribution.
+
+No specific inference method is implemented in the \pkg{Renext} POT
+fitting. A special case is when $\delta$ is equal to the (known) threshold~$u$
+and when moreover $\alpha$ is known. Indeed, we then fit an exponential distribution 
+to a transformed  version $\phi_\alpha(X)$ of the level $X \equiv Y +u$.
+We thus can use in the special case where $\alpha=2$ (square transformation)
+and the limit case where $\alpha = 0$ (log transformation) as explained
+above in~\ref{TRANSEXP}.
+In the \verb@Renouv@ function, one must then use
+\verb@distname.y = "exponential"@; the transformation argument 
+must be respectively \verb@trans.y = "square"@ and \verb@trans.y = "log"@. 
+
+
+\subsection{Other distributions}
+%%---------------------------
+It is possible to use a quite arbitrary distribution within the \verb@Renouv@
+function provided the probability functions\footnote{Density, distribution and quantile
+functions are required.}
+are available in~R and satisfy the conditions stated in the help of the \verb@Renouv@ 
+function.
+

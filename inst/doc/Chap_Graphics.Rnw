@@ -1,0 +1,446 @@
+\chapter{Renext graphics}
+
+\label{Chap-RenextGraphics}
+\index{return level!plot|(}
+
+%\section{}
+%%---------------------------
+\pkg{Renext} graphics are based on the \pkg{graphics} package and can
+hence be customised as usual. However, adding points to a RL plot is
+not always easy: when several types of data exist, the determination
+of the plotting positions requires quite technical computations as
+performed by the \verb@SandT@ function.
+
+A number of supplementary functions are provided to facilitate the
+most frequent modifications of RL plots. A widespread practice is
+showing on a same RL plot the data (sample points) and some elements
+of a fitted model: quantile line, confidence bounds. When several
+kinds or sources of data are used in the fit, it is important to
+display them in such a way that the different sources are readily
+identified.  It arose from users practice that representing \textit{several}
+fits on the same RL plot through a \verb@lines@ or \verb@points@
+method is often a valuable option, provided that the fits can be
+identified by colour or line type, and that a legend is shown: the
+\verb@RLpar@ function and the \verb@RLlegend*@ functions have been
+designed for these two tasks.
+
+\section{The \texttt{plot} and \texttt{lines} methods}
+%%---------------------------
+\index{confidence limits!shown or not}
+\index{Garonne data@{\texttt{Garonne} data}|(}
+The \verb@plot@ and \verb@lines@ methods can be used to build return level plots
+showing several elements: quantile line (or return level line), sample points,
+$\dots$ A plot can be obtained by adding elements to an existing plot with the
+\verb@lines@ method. Recall that the dispatch mechanism of S3 applies when the
+first argument (here \verb@x@) of the generic function (here \verb@lines@)
+is an object of a class \verb@"Renouv"@ for which a method has been implemented 
+(here \verb@"Renouv"@).
+
+<<label=ggaronne1, fig=TRUE, include=FALSE>>=
+fitG <- Renouv(Garonne, distname.y = "GPD", plot = FALSE)
+## specify pch background color for MAX block #1
+plot(fitG, show = list(OT = TRUE, MAX = FALSE), main = "use plot, then lines")
+lines(fitG, show = list(MAX = TRUE))
+@ 
+\index{show argument of lines.Renouv@{\texttt{show} argument of \texttt{lines.Renouv}}}% 
+
+\noindent
+The \verb@show@ argument of \verb@plot@ and \verb@lines@ is used to
+select the elements in \verb@"Renouv"@ object passed in \verb@x@ (here
+\verb@Garonne@) that will be shown. This is a named list having
+logical vectors as its elements. By playing with the \verb@show@
+formal, we can build a plot in several steps as here: first plot
+without \verb@MAX@ blocks, then add them to the plot.  Note that the
+legend is not updated when adding elements to the graph, motivating
+the \verb@RLlegend*@ mechanism described later in
+section~\ref{secRLlegend}.
+\begin{figure}
+   \centering
+   \begin{tabular}{c c} 
+     \includegraphics[width=7cm]{Rgraphics/fig-ggaronne1.pdf} &
+     %%\includegraphics[width=7cm]{Rgraphics/fig-ggaronne3.pdf} 
+   \end{tabular}
+   \caption{\label{GGaronne1} Adding historical information with
+     \texttt{lines}. Note that the points added using \texttt{lines}
+     are not described in the legend.  }
+\end{figure}
+
+\section{The \texttt{RLpar} function} 
+%%-----------------------------
+\index{RLpar function@{\texttt{RLpar} function}|(}
+\subsection{Basics}
+The \verb@RLpar@ function is used to change some of the graphical parameters
+such as colours, line types or plotting characters. It returns a hierarchical
+list designed to be used as a value of the \verb@par@ formal argument of the
+\verb@plot@ and \verb@lines@ methods.  The hierarchical structure of this list
+can be shown using \verb@str@, but this would take too much space here, so we
+will use \verb@names@
+
+<<>>=
+names(RLpar())
+str(RLpar()$quant)
+names(RLpar()$MAX)
+@
+\par\noindent
+The hierarchical structure is displayed in table~\ref{RLparTable}. The list can be flattened by 
+using \verb@unlist@, producing element names as shown in the last column of table~\ref{RLparTable}.
+<<>>= 
+## display 10 names
+head(names(unlist(RLpar())), n = 10)
+@
+\par\noindent
+So \verb@unlist@ coerces the hierarchical list into a character vector with
+named elements. In the elements names, the dot \verb@.@ indicate the
+hierarchical levels that have been flattened. For instance, the element
+\verb@quant.type@ is the coercion of the \verb@quant$type@ element of the
+hierarchical list \verb@RLpar()@.  Using this dot separated format, we can
+easily change the value of any graphical parameter appearing in the list.
+
+<<>>=
+newPar <- RLpar("quant.col" = "azure")
+unlist(newPar$quant)
+@
+\par\noindent
+The use of \verb@RLpar@ is not totally unlike that of the \verb@par@ function of
+the \pkg{graphics} package; however
+\verb@RLpar@ does not alter the value of a variable outside of the global
+environment as \verb@par@ does.  The normal use of \verb@RLpar@ is as a value
+for the \verb@par@ formal argument within a call to \verb@plot@ or \verb@lines@
+methods, with the aim of encapsulating the graphical parameters settings. 
+Here is an example.
+
+<<label=ggaronne2, fig=TRUE, include=FALSE>>=
+## specify pch background colour for MAX block #1
+plot(fitG, par = RLpar(MAX.block1.bg = "green", MAX.block1.pch = 24),
+     main = "change symbol bg colour") 
+@
+\par\noindent
+The given values for the parameters must be chosen with care since they are not
+controlled. For instance, giving the value \verb@"blue"@ for a \verb@pch@
+parameter will cause no error or warning but will most probably lead to an
+unwanted result.  Note that as seen in table~~\ref{RLparTable}, the graphical
+parameters can be numeric or character\footnote{To a certain extend, they also
+  can be R language to be evaluated. E.g. \texttt{rgb(0.1, 0.2, 0.9)} can be used
+  to specify a colour.}.  
+Character values for plotting characters (e.g. in
+\verb@pch = "+"@) should not be used, because they are likely to create problems
+in legends. They can be replaced by an equivalent numeric 
+(e.g. in \verb@pch = 3@).
+
+With a package version \verb@>= 2.2-0@, regular expressions can be used as well to
+\index{regular expression} change \textit{several} graphical parameters. For instance,
+in
+<<>>=
+newPar <- RLpar("OTS.block[0-9]+.col" = "red")
+newPar$OTS$block1$col
+@
+we turn to red the colour of \textit{all} the symbols used for the OTS blocks. We can as well
+use only ``nabla'' triangles ($\nabla$, \verb@pch = 25@) as plotting characters with
+<<label=ggaronne3, fig=TRUE, include=FALSE>>=
+plot(fitG, par = RLpar("*.pch" = 25), main = "regexp for plotting characters (pch)")
+@
+which produces the plot at the right of figure~\ref{GGaronne23}.
+
+\begin{figure}
+   \centering
+   \begin{tabular}{c c} 
+     \includegraphics[width=7cm]{Rgraphics/fig-ggaronne2.pdf} &
+     \includegraphics[width=7cm]{Rgraphics/fig-ggaronne3.pdf} 
+   \end{tabular}
+   \caption{\label{GGaronne23} Using a \texttt{par} formal with \texttt{RLpar}. Note
+   that on the plot at the right all the plotting characters have been changed.}
+\end{figure}
+%%\nocite*
+%%\bibliography{Renext}
+%%\bibliographystyle{jss}
+
+By combining the two formals \verb@show@ and \verb@par@ of the
+\verb@plot@ and \verb@lines@ methods, we can easily change the styles
+of the elements of a plot, see section~\ref{secBlockData} later.
+
+
+<<echo=FALSE, results=tex>>=
+L <- RLpar()
+cat("\\begin{table}\n  \\centering \\tt \\begin{tabular}{|l|l|l|l|l|}\n   \\hline")
+cat("   \\multicolumn{1}{|c|}{\\textrm{\\bf level 1}} \\rule{0pt}{1em} & \n")
+cat("   \\multicolumn{1}{c|}{\\textrm{\\bf level 2}} & \n")
+cat("   \\multicolumn{1}{c|}{\\textrm{\\bf level 3}} & \n")
+cat("   \\multicolumn{1}{c|}{\\textrm{\\bf value}} &  \n")
+cat("   \\multicolumn{1}{c|}{\\textrm{\\bf full name}}\\\\")
+cat("   \\hline \\hline \n")
+
+Nb <- sapply(L, function(x) sum(sapply(x, is.list)))
+for (nm in names(L)) {
+    cat(sprintf("%s &  & & & \\\\", nm), "\n")
+    if (Nb[nm] == 0) {
+        for (nm1 in names(L[[nm]])) {
+            nm3 <- paste(nm, nm1, sep = ".")
+            val <- L[[nm]][[nm1]]
+            if (is.numeric(val)) {
+                cat(sprintf("     &  \"%s\" & & \\multicolumn{1}{r|}{%s} & %s \\\\", nm1, L[[nm]][[nm1]], nm3), "\n")
+            } else {
+                cat(sprintf("     &  \"%s\" & & \"%s\" & %s \\\\", nm1, L[[nm]][[nm1]], nm3), "\n")
+            }
+        }
+    }  else {
+        cat(sprintf("     &  %s &    & & \\\\", names(L[[nm]])[1] ), "\n")
+        for (nm2 in names(L[[nm]][[1]])) {
+            val <- L[[nm]][[1]][[nm2]]
+            nm3 <- paste(nm, names(L[[nm]])[1], nm2, sep = ".")
+            if (is.numeric(val)) {
+                cat(sprintf("     &  & \"%s\"& \\multicolumn{1}{r|}{%s} & %s \\\\", nm2, val, nm3), "\n")
+            } else {
+                cat(sprintf("     &  & \"%s\" & \"%s\" & %s \\\\", nm2, val, nm3), "\n")
+            }
+        }
+        
+        cat(sprintf("     &  %s & (list)   &  &\\\\", names(L[[nm]])[2] ), "\n")
+        cat(sprintf("     &  \\multicolumn{1}{c|}{\\vdots} &   &  & \\\\"), "\n")
+        cat(sprintf("     &  %s & (list)   &  &\\\\", names(L[[nm]])[Nb[nm]] ), "\n")
+    }
+    cat("\\hline\n")
+}
+cat("\n   \\end{tabular}\n")
+cat("\\caption{\\label{RLparTable} \\rm The \\texttt{RLpar()} hierarchical list. The hidden
+  structures are similar to those shown, e.g. within \\texttt{MAX}, the \\texttt{block2} has the same structure
+  as \\texttt{block1}.} \\end{table}\n")
+@ 
+
+\index{RLpar function@{\texttt{RLpar} function}|)}
+
+
+\section{The \texttt{RLlegend*} functions} 
+%%-----------------------------
+\label{secRLlegend}
+\index{Rlegend* functions@{\texttt{RLlegend*} functions}|(} 
+\index{legend of a RL plot} 
+A \verb@plot@ statement can contain directives to plot several
+graphic elements: quantile lines, sample points, ... each generating a line in
+the legend provided that the \verb@legend@ formal is \verb@TRUE@. To a certain
+extend, the text labels in the legend can be changed by using named elements in
+the lists or vector.
+
+The \verb@RLlegend*@ functions are used to add a legend to a return level
+plot which is built by steps via \verb@lines@. 
+
+\begin{enumerate}
+
+\item A call to the \verb@RLlegend.ini@ function initialises a special variable
+which can be thought of as global\footnote{To be exact, this variable is stored
+  in an environment bound to the package.}.
+
+\item One call to the \verb@plot@ method creates the plot, and subsequent calls
+to \verb@lines@ add elements to it.  For these statements, the \verb@legend@
+formal argument must be turned to \verb@FALSE@ in order to delay the
+construction of the legend\footnote{Without this precaution, the same
+element will be shown several times in the legend.}.
+
+\item \verb@RLlegend.show@ adds the legend to the plot on the active device.
+
+\end{enumerate}
+Consider again the first example of this chapter.
+<<ggaronne4, fig=TRUE, include=FALSE>>=
+RLlegend.ini()
+plot(fitG, show = list(OT = TRUE, MAX = FALSE),
+     main = "use plot, then lines", legend = FALSE)
+lines(fitG, show = list(OT = FALSE, quant = FALSE, MAX = TRUE), legend = FALSE)
+RLlegend.show()
+@ 
+\par\noindent
+The elements added with lines are now duly described in the legend as shown on 
+figure~\ref{GGaronne4}. Note that the name of the R object used in the 
+\verb@x@ argument of \verb@plot@ or \verb@lines@ (here \verb@fitG@)
+is used as prefix. This can be changed by specifying a value for 
+the \verb@label@ argument.
+
+\begin{figure}
+   \centering
+   \begin{tabular}{c c} 
+     \includegraphics[width=7cm]{Rgraphics/fig-ggaronne4.pdf} &
+     \includegraphics[width=7cm]{Rgraphics/fig-gchangeu.pdf} 
+   \end{tabular}
+   \caption{\label{GGaronne4} Left: building a RL plot with legend by steps. Right:
+     Fits using different thresholds $u$. }
+\end{figure}
+
+\subsection{Example: sensitivity to the choice of the threshold}
+%-------------------------------------------------------
+\label{SensThreshold}
+\index{threshold!choice|(}
+The next example shows a situation in which the gradual construction of a
+RL plot can be useful. We want to compare RL plots for different fits of the
+same data but using different thresholds $u$. We use again \verb@Garonne@,
+including its historical information. Since the fit lines differ only by their
+colour, we can use the standard palette\footnote{A better solution would use a
+  sequential palette from the \pkg{RColorBrewer} package.} \verb@rainbow@. We
+also make colours translucent (i.e. semi-transparent) for clarity.
+\index{translucent colours}
+
+<<gchangeu, fig=TRUE, show=TRUE, include=FALSE>>=
+u <- seq(from = 2500, to = 5000, by = 500)
+fit1 <- Renouv(Garonne, threshold = u[1], distname.y = "GPD", plot = FALSE)
+
+cols <- translude(rainbow(length(u)), alpha = 0.6)
+
+RLlegend.ini()
+## plot with no lines or points.
+plot(fit1,
+     main = "GPD for 'Garonne'. Sensitivity of RL to the threshold u",
+     show = list(quant = FALSE, OT = TRUE, conf = FALSE, MAX = TRUE),
+     legend = FALSE)               
+for (i in 1L:length(u)) {
+    fiti <- Renouv(Garonne, threshold = u[i], distname.y = "GPD", plot = FALSE)
+    lines(fiti, legend = FALSE,
+          label = paste("u = ", u[i]),
+          show = list(OT = FALSE, conf = FALSE, quant = TRUE, MAX = FALSE),
+          par = RLpar(quant.col = cols[i]))
+}
+RLlegend.show()
+@
+\noindent
+The plot is shown on the right of figure~\ref{GGaronne4}. It shows
+that choosing $u \geqslant 3500$ will lead to much smaller
+return levels for the return period $T=1000$.
+
+%% \begin{figure}
+%%    \centering
+%%    \begin{tabular}{c c} 
+%%      \includegraphics[width=7cm]{Rgraphics/fig-gchangeu.pdf} &
+%%    \end{tabular}
+%%    \caption{\label{GChangeu} Fits using different thresholds $u$. }
+%% \end{figure}
+
+\index{Rlegend* functions@{\texttt{RLlegend*} functions}|)}
+\index{threshold!choice|)}
+
+\section{Block data} 
+%%-----------------------
+\label{secBlockData}
+\index{block data|(}
+
+\subsection{One style per block?}
+%%--------------
+When a \verb@Renouv@ object contains block data (MAX or OTS), these can
+be shown on the RL plot in a quite flexible way. As explained above, the graphical 
+parameters can be set with \verb@RLpar@, although a limited number of 
+styles is imposed for the blocks.
+
+\begin{list}{$\bullet$}{ }
+
+\item A different plotting style can be used or not for each block, depending on
+  the \verb@byBlockStyle@ formal argument.
+
+\item For each of the two block types, one can select the blocks shown by using
+  a logical or character vector as a \verb@MAX@ or \verb@OTS@ element of the
+\verb@show@ list formal.
+
+\end{list}
+
+Consider the following fictive example with $4$ OTS blocks. We begin with 
+a basic call to \verb@plot@ producing the plot on the left of
+figure~\ref{GGaronne56}.
+
+<<label=ggaronne5, fig=TRUE, include=FALSE>>=
+fitSim <- Renouv(x = rexp(100), effDuration = 100, threshold = 0,
+                 OTS.data = list("deluge" = c(1.2, 2.4, 6.2, 3.1),
+                     "dryness1" = c(0.2, 0.3),
+                     "dryness2" = numeric(0),
+                     "dryness3" = numeric(0)),
+                 OTS.effDuration = c(60, 100, 20, 30),
+                 OTS.threshold = c(1.0, 0.1, 0.3, 0.1),
+                 plot = FALSE)
+
+plot(fitSim, main = "simulated data, by Block", label = "")
+@
+Each of the four blocks uses a different style and is shown 
+in the legend. By using the \verb@byBlockStyle@ argument, 
+we can change this default behaviour, see the plot at the  right  of
+figure~\ref{GGaronne56}. Note that when \verb@byBlockStyle@
+is \verb@TRUE@, the common plotting characteristics can be changed
+as would be the first block \verb@"block1"@, even if the block with number \verb@1@
+is not shown on the plot --~this is just a matter of convention. To
+specify a common style for all \verb@OTS@ blocks we use
+<<label=ggaronne6, fig=TRUE, include=FALSE>>=
+plot(fitSim, main = "simulated data", label = "", byBlockStyle = c("OTS" = FALSE))
+@
+Since there are no \verb@MAX@ blocks here, it is not necessary to 
+specify the \verb@MAX@ element. Obviously,  the elements of \verb@byBlockStyle@ 
+must be named; yet we could have used as well 
+a \textit{list} as in \verb@list("OTS" = FALSE)@, instead of the character (atomic) vector
+\verb@c("OTS" = FALSE)@.
+
+\begin{figure}
+   \centering
+   \begin{tabular}{c c} 
+     \includegraphics[width=7cm]{Rgraphics/fig-ggaronne5.pdf} &
+     \includegraphics[width=7cm]{Rgraphics/fig-ggaronne6.pdf} 
+   \end{tabular}
+   \caption{\label{GGaronne56} Using a different style for each 
+   block (left) or one common style for all (right).}
+\end{figure}
+
+\subsection{Enlightening one block}
+%%------------------------------------------
+We now consider a more elaborated example using the same \verb@Renouv@
+object as before, namely \verb@fitSim@. Assume that we want all blocks to 
+be shown with the same style, except one. We can use a logical 
+\textit{vector} in the considered element of \verb@show@, i.e. in \verb@showOTS@.
+This vector must have its length equal to the number of blocks, and
+its elements tell if the corresponding block (in the same order) is shown or not. 
+\index{show argument of lines.Renouv@{\texttt{show} argument of \texttt{lines.Renouv}}}
+
+<<label=ggaronne7, fig=TRUE, include=FALSE>>=
+RLlegend.ini()
+plot(fitSim, main = "grouping blocks", label = "",
+     show = list("OTS" = FALSE),              ## IMPORTANT!
+     legend = FALSE)
+
+## add dryness blocks. Note that the label is used as prefix for all elements.
+lines(fitSim, label = "dyryness",
+      byBlockStyle = c("OTS" = FALSE),
+      show = list("quant" = FALSE, "OTS" = c(FALSE, TRUE, TRUE, TRUE)),
+      par = RLpar(OTS.block1.pch = 22,
+          OTS.block1.col = "red", OTS.block1.bg = "gold"),
+      legend = FALSE)
+
+## add deluge block
+lines(fitSim, label = "",
+      byBlockStyle = c("OTS" = TRUE),
+      show = list("quant" = FALSE, "OTS" = c(TRUE, FALSE, FALSE, FALSE)),
+      par = RLpar(OTS.block1.col = "SteelBlue3", bg = "darkcyan"),
+      legend = FALSE)
+RLlegend.show()
+@
+As said before, we use \verb@OTS.block1@ to select the plotting 
+symbol and its properties, although the block with number \verb@1@ (named \verb@"deluge"@)
+is not displayed by the corresponding call to \verb@lines@ (since 
+the first element of \verb@show$OTS@ is \verb@FALSE@).
+
+
+Instead of a logical vector, each of the list elements named \verb@"MAX"@ 
+and \verb@"OTS"@ in \verb@show@ can be a \textit{character string} used to select the wanted 
+elements. This is useful when the names of the blocks are relevant
+for the selection. The following code produced the plot shown at the 
+right of figure~\ref{GGaronne78}.
+\index{show argument of lines.Renouv@{\texttt{show} argument of \texttt{lines.Renouv}}}
+
+<<label=ggaronne8, fig=TRUE, include=FALSE>>=
+RLlegend.ini()
+plot(fitSim, main = "char. in 'show'", label = "", show = list("OTS" = "dryness"))
+RLlegend.show()
+@
+
+\begin{figure}
+   \centering
+   \begin{tabular}{c c} 
+     \includegraphics[width=7cm]{Rgraphics/fig-ggaronne7.pdf} & 
+     \includegraphics[width=7cm]{Rgraphics/fig-ggaronne8.pdf} 
+   \end{tabular}
+   \caption{\label{GGaronne78} Using a common style for all blocks
+   except one (left). Using a character value in \texttt{show} to select
+   some blocks by their name (right).
+ }
+\end{figure}
+\index{block data|)}
+\index{return level!plot|)}
+\index{Garonne data@{\texttt{Garonne} data}|)}

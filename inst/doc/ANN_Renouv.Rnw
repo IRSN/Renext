@@ -1,0 +1,206 @@
+\chapter{The ``renouvellement'' context}
+%%***************************************************
+
+\label{ANN-Renouv}
+
+\section{Marked point process}
+%%=================================
+
+The \textit{m\'ethode du renouvellement} uses a quite general marked
+process $[T_i,\,X_i]$ for events and levels. As in~\ref{ASSUMPTIONS}
+the two sequences "events" and "levels" are assumed to be independent,
+and the $X_i$ are assumed to be independent and identically
+distributed with continuous distribution $F_X(x)$.
+
+An alternative equivalent description of the events occurrence is
+through the associated \textit{counting process}~$N(t)$. This
+describes the joint distribution for the the numbers of
+events~$N(t_k)-N(s_{k})$ on an arbitrary collection of disjoint
+intervals~$(s_k,\,t_k)$.  Although the most important and clearest
+context is the HPP, the theory can be extended to cover non-poissonian
+L\'evy counting processes~$N(t)$ e.g.  Negative Binomial. However, the
+Negative Binomial L\'evy Process \index{negative binomial} implies the
+presence of multiple (simultaneous) events.
+
+\section{Maxima}
+%%=================================
+\label{COMPOUND}
+
+\subsection{Compound maximum}
+%%------------------------
+\index{compound maximum} 
+
+Consider an infinite sequence of independent and identically
+distributed random variables $X_k$ with continuous distribution
+$F_X(x)$. The maximum
+$$
+    M_n = \max(X_1, X_2, \,\dots,\, X_n)
+$$
+has a distribution function given by $F_{M_n}(x) = F_X(x)^n$.
+Now let $N$ be a random variable independent of the $X_k$ sequence and taking 
+non-negative integer values. The "compound maximum" 
+$$
+     M = \max(X_1, X_2, \,\dots,\, X_N)
+$$
+is a random variable with a mixed type distribution: it is continuous
+with a probability mass corresponding to the $N=0$ case which can be
+considered as leading to the certain value $M=-\infty$.  The
+distribution of $M$ can be derived from that of $X_k$ and $N$. Using
+$\Pr\pCond{M \leqslant x}{N=n} = F_X(x)^n$ and the total probability
+formula we get
+\begin{equation}
+   F_M(x) =  \sum_{n=0}^\infty \,F_X(x)^n \Pr\left\{N = n\right\} 
+          = h_N[F_X(x)]
+\end{equation}
+where $h_N(z) = \Esp\left(z^N\right)$ is the generating function
+of~$N$. 
+
+When $N$ has a Poisson distribution with mean $\mu_N=\lambda w$
+the generating function is given by
+$h_N(z) = \exp\{-\mu_N\,[1-z]\}$ and 
+\begin{equation}
+  \label{eq:FX2FM}
+   F_M(x) = \exp\{- \lambda w  \left[1-F_X(x)\right]\} = 
+   \exp\{- \lambda w \,S_X(x) \}. 
+\end{equation}
+When $F_X(x)$ is GPD, it can be shown that~$M$ is\footnote{Up to its
+  probability mass.} GEV see later.
+
+For large return levels $x$, we have $F_X(x) \approx 1$. The generating 
+function $h_N(z)$ for $z=1$ has a value $h_N(z)=1$ and a first derivative 
+$h_N'(z) = \Esp(N)$, leading to
+\begin{equation}
+  \label{eq:FAPP1}
+   1- F_M(x) \approx \Esp(N)\left[1 - F_X(x)\right],
+\end{equation}
+or equivalently 
+\begin{equation}
+  \label{eq:FAPP2}
+   F_M(x) \approx F_X(x)^{\Esp(N)} 
+\end{equation}
+which tells that for large return levels, the distribution of $M$ is
+approximately that of the maximum of $\Esp(N)$ independent~$X_k$.
+Both formula~(\ref{eq:FAPP1}) and (\ref{eq:FAPP2}) tell that the
+distribution of~$N$ only influences large return periods through its
+expectation. Consequently there is little point in choosing a
+non-Poisson distribution for~$N$ as far as the interest is focused on
+large return periods.
+
+From formula~(\ref{eq:FAPP2}) and the asymptotic behaviour of the
+maximum of~$n$ independent and identically distributed random
+variables (see~\ref{ASYMPTGEV} later), it appears that when $\Esp(N)$
+is large the distribution of $M$ will generally be close to a suitably
+scaled GEV distribution.
+
+\subsection{Special cases}
+%%------------------------
+\label{SPECIALCASES}
+
+A case with special interest is when $N$ is Poisson with mean
+$\mu_N=\lambda w$ and $X$ has a Generalised Pareto Distribution
+(GPD).  Then~$M$ follows\footnote{Up to its probability mass in
+  $-\infty$.} a Generalised Extreme Value (GEV) distribution as is
+usually assumed .
+
+Consider first the exponential case $S_X(x) = e^{-(x - \mu)/\sigma}$ for  
+$x \geqslant \mu$. Then~(\ref{eq:FX2FM}) writes as
+$$
+   F_M(x) = \exp\left\{ -\lambda w \,e^{-(x - \mu)/\sigma} \right\}
+$$
+which using simple algebra can be identified as the Gumbel
+distribution function with parameters $\mu^\star = \mu + \sigma \log
+(\lambda w)$ and $\sigma^\star = \sigma$.  
+\index{Gumbel distribution}
+
+In the general case where $F_X(x)$ corresponds to the~GPD, we have 
+$S_X(x) = \left[1 + \xi (x-\mu)/\sigma \right]^{-1/\xi}$ for 
+$x \geqslant \mu$, hence
+$$
+   F_M(x) = \exp\left\{ -\lambda w 
+     \left[1 + \xi (x-\mu)/\sigma \right]^{-1/\xi} \right\}
+$$
+which can be identified as $\texttt{GEV}(\mu^\star,\,\sigma^\star, \,\xi)$ 
+with parameters $\mu^\star$ and $\sigma^\star$ depending on $\mu$ and  $\sigma$,
+see~\citet{RenCompDet}.
+Note that the shape parameter $\xi$ is the same for the GPD and the 
+GEV distribution.
+\index{GEV distribution!for block maxima}
+\index{GPD (distribution)} 
+
+% \begin{equation}
+%   \label{eq:GEVPARMS}
+%   \mu^\star = \mu  + \frac{(\lambda w)^\xi -1}{\xi} \,\sigma \qquad 
+%   \sigma^\star =  (\lambda w)^\xi\, \sigma \qquad 
+%   \xi^\star = \xi
+% \end{equation}
+% The second formula for $\xi=0$ is to be replaced by its limit for $\xi \rightarrow 0$,
+% that is $\mu^\star$ of the exponential case..
+
+
+%% Using this formalism we can derive the distribution of the
+%% maximum of the $X_k$ on an arbitrary period of length $w$. 
+
+
+\section{Return periods}
+%%=========================
+\label{TWORL}
+\index{return period!POT vs block maxima|(} 
+
+In the general marked process context described above, the return
+period of a given level~$x$ can be defined using the thinned process
+$[T_i,\,X_i]$ of events with level exceeding~$x$ i.e. with
+$X_i>x$. The return period will be the expectation $T_X(x)$ of the
+interevent in the thinned process.  In the rest of this section, we
+assume that events occur according to a HPP with rate $\lambda>0$. Due
+to the independence of events and levels, the thinned event process
+also is an HPP with rate $\lambda(x) = \lambda\,S_X(x)$. The return
+period is then given by
+$$
+    T_X(x) = \frac{1}{\lambda \,S_X(x)}.
+$$
+Actually the interevent distribution is exponential with expectation $1/\lambda(x)$.
+
+Still using the same probabilistic framework, we may consider the
+sequence of annual maxima or more generally the sequence $M_n$ of
+maxima for successive non-overlapping time blocks with the same
+duration $w>0$. The random variables~$M_n$ are independent with a
+common distribution $F_M(x)$ that can be determined as it was done in
+the previous section.  In this "block" context, the return period of a
+level $x$ naturally expresses as a (non-necessarily integer) multiple
+of the block duration. Thus if $F_M(x) = 0.70$ i.e. if the level~$x$
+is exceeded with $30\%$ chance within a block, the return period is
+$1/0.3 \approx 3.33$ expressed in block duration unit. More generally,
+the \textit{block} return period of the level~$x$ will be computed as
+\begin{equation}
+  \label{eq:TM}
+  T_M(x) = \frac{w}{1-F_M(x)} 
+   = \frac{\textrm{block duration}}{\textrm{prob. that }M\textrm{ exceeds }x}.
+\end{equation}
+A major difference between the two return periods $T_X(x)$ and $T_M(x)$
+is that the level $x$ can be exceeded 
+several times within the same block, especially for small~$x$. This difference
+may make ambiguous some statements about yearly return periods or yearly risks.
+For instance, the level $x$ with a $100$~years return period $T_X(x)$ is very 
+likely to be exceeded twice or more within a given century\footnote{Within a given century,
+the number $N(x)$ of events with levels $X_i>x$ is then Poisson with mean~$1$. Thus
+$\Pr\{N(x) = 0\} \approx 0.37$ and $\Pr\{N(x) > 1\} \approx 0.26$.}.
+
+Using the relation~(\ref{eq:FX2FM}) between the distributions $F_X(x)$
+and~$F_M(x)$, the relation (\ref{eq:TM}) becomes
+\begin{equation}
+   \label{eq:TAUM2}
+    T_M(x) = \frac{w}{1-\exp\left\{-\lambda w \left[1-F_X(x)\right]\right\}}. 
+\end{equation}
+In practice, the interest will be focused on large levels~$x$.  In the
+expression at the denominator we may then use the approximation
+$1-e^{-z} \approx z$ for small $z$, leading to $T_M(x) \approx
+T_X(x)$.  Moreover the inequality~$1-e^{-z} \leqslant z$ for $z
+\geqslant 0$ shows that $T_M(x) \geqslant T_X(x) $ for all~$x$. Using
+$1-e^{-z} \approx z -z^2/2$, we even find a better approximation for
+moderately large levels~$x$
+$$
+    T_M(x) \approx T_X(x) + \frac{w}{2}.
+$$
+The presence of the half-block length $w/2$ can be viewed as a 
+rounding effect.
+\index{return period!POT vs block maxima|)}

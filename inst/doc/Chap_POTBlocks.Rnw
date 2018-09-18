@@ -1,0 +1,307 @@
+\chapter{POT and block data}
+
+\label{Chap-POTBlocks}
+
+Although devoted to POT, \pkg{Renext} can be used for some analyses
+involving block data: block maxima and $r$ largest. These
+possibilities are restricted to models arising form the marked process
+with a distribution of levels in the GPD family, including
+exponential, Lomax or maxlo distributions.
+
+\section{Example: Venice data}
+%%===================
+\index{rlargest@{$r$~largest}|(}
+\index{block maxima|(}
+\index{venice data@{\texttt{venice} data}|(}
+
+Consider the \textit{Venice} data, concerning the sea-level at Venice (in cm).
+This dataset is used as example~1.5 in Coles' book, where it used
+in section~3.5.3 for a $r$~largest analysis. Variants
+of this dataset are provided by several CRAN 
+packages\footnote{E.g. with a \texttt{Year} column in \textbf{ismev}.}. We will
+use here the \textit{data frame} object named \verb@venice@ from \pkg{evd}.
+\index{evd package@{\textbf{evd} package}}
+<<>>=
+head(venice, n = 3)
+range(venice, na.rm = TRUE)
+@ 
+
+\noindent
+We have $\Sexpr{nrow(venice)}$ years of data from
+$\Sexpr{rownames(venice)[1]}$ to
+$\Sexpr{rownames(venice)[nrow(venice)]}$ and for each year the $r$
+largest observations for $r \leqslant 10$, given in descending
+order. Missing observations are present in year 1935, and then given
+as \verb@NA@.
+
+We may regard the observations as arising from a POT model, and
+hence use them as MAX data blocks, all with duration equal to one
+year.  For that aim, we need to build a list with one element by year:
+a numeric vector with the $r$~largest values observed that year,
+e.g. $r=5$.
+
+<<>>=
+r <- 5
+MAX.data <- as.list(as.data.frame(t(venice[ , 1:r])))
+MAX.data <- lapply(MAX.data, function(x) x[!is.na(x)])
+MAX.effDuration <- rep(1, length(MAX.data))
+head(MAX.data, n = 2)
+head(unlist(lapply(MAX.data, length)))
+@
+
+\noindent
+Note that the transposition method \verb@t@ returns a \textit{matrix},
+and a coercion to \verb@data.frame@ is required to get a list.
+
+
+Since all observations are $>66$~cm, we can consider a POT model with
+$u \leqslant 66$ to use all available information. Then we can the use the
+\verb@Renouv@ function
+
+<<>>=
+fit.GPD <- Renouv(x = NULL, 
+                  MAX.data = MAX.data, MAX.effDuration = MAX.effDuration,
+                  distname.y = "GPD", threshold = 66,
+                  numDeriv = FALSE, trace = 0, plot = FALSE)
+coef(fit.GPD)
+@
+
+\noindent
+We implicitly supposed that for each year the $r$ provided observations
+are the largest, even when \verb@NA@ are found.
+Since the fitted object has class \verb@"Renouv"@, the \verb@plot@
+method shows the usual RL plot
+
+<<venice5, fig=TRUE, include=FALSE>>=
+plot(fit.GPD)
+@ 
+
+\noindent
+see fig.~\ref{VenicerLarg}. The plotting positions for the points are
+obtained as explained in section~\ref{MAXPLOTPOS}.
+
+\begin{figure}
+  \centering
+  \begin{tabular}{c} 
+     \includegraphics[width=7cm]{Rgraphics/fig-venice5.pdf} 
+   \end{tabular}
+   \caption{\label{VenicerLarg} 
+     Fit using $r$~largest values from the \texttt{venice} data
+     set.  The plotting positions are obtained as explained in
+     section~\ref{MAXPLOTPOS}.}
+\end{figure}
+
+For \verb@Renouv@ objects using a distribution in the GPD family, a
+``translation'' of the parameters to GEV parameters for block maxima is
+provided in the \verb@MAX@ element of the result.
+
+<<>>=
+fit.GPD$MAX
+@
+
+\noindent
+The translation provides the estimated parameters of a GEV
+distribution $\texttt{GEV}(\mu^\star,\sigma^\star,\,\xi^\star)$ and
+must not be confused with those of the $\texttt{GPD}(u,\sigma,\,\xi)$
+for the excesses of the POT model. The estimated values of the shape
+parameters $\xi$ and $\xi^\star$ are the always the same, but the
+estimated scale parameters differ and $\mu^\star$ is not equal to the
+threshold $u$.  The GEV distribution can be used as usual in the
+$r$~largest context. If a different threshold had been used, e.g. $u =
+50$ the POT parameters would have been very different, but the GEV
+parameters would have been the same.
+
+%% Note however that for the
+%% POT model with event rate $\lambda$, a block of duration $w$ can be
+%% empty hence have no maxima: this occurs with the probability
+%% $e^{-\lambda w}$. 
+
+
+
+\section{Using \texttt{fGEV.MAX}}
+%%===========================================
+\index{GEV distribution!ML estimation|(}
+Beside \verb@Renouv@, the \verb@fGEV.MAX@ function was added to
+\pkg{Renext} to perform the estimation of a GEV distribution
+$\texttt{GEV}(\mu^\star,\,\sigma^\star, \xi^\star)$ from block maxima
+or from $r$~largest observations, using in both cases blocks having
+\textit{the same duration}.  This function uses the representation of
+the GEV as the distribution of the block maxima in a POT model with
+GPD excesses. The distribution is no longer a formal argument, and nor
+is the threshold $u$ which is chosen depending on the data. In the
+likelihood~$L$, the POT rate $\lambda$ has been concentrated out, so $L$
+depends only on the two parameters $\sigma$ and $\xi$ of the POT
+model. Although computation time is not really a concern here, the
+optimisation is much faster than the usual one which uses the three
+GEV parameters $\mu^\star$ $\sigma^\star$ and $\xi^\star$.  The
+hessian at the optimum is computed using analytical derivatives rather
+than numerical derivatives. Details can be found in \cite{RenCompDet}.
+
+
+<<>>=
+fit.GEV <- fGEV.MAX(MAX.data = MAX.data, MAX.effDuration = MAX.effDuration)
+fit.GEV$estimate
+require(ismev)
+fit.GEVref <- rlarg.fit(venice, show = FALSE)
+ 
+fit.GEVref$mle
+@
+
+\noindent
+Note that \verb@fGEV.MAX@ returns a simple \verb@list@ object and the
+methods such as \verb@coef@ can not be used.
+
+\index{GEV distribution!ML estimation|)}
+
+\index{block maxima|)}
+\index{rlargest@{$r$~largest}|)}
+\index{venice data@{\texttt{venice} data}|)}
+
+\section{Computing the $r$ largest observations}
+%%========================================
+\label{OT2MAX}
+\index{OT2MAX function@{\texttt{OT2MAX} function}|(}
+\index{missing periods!in blocks|(}
+
+\subsection{Coping with gaps}
+%%-----------
+Given observations $[T_i,\,X_i]$ of the marked process, it seems quite
+easy to compute block maxima or $r$~largest --~in other words, to
+aggregate the data.  However, in some cases gaps are present and must
+be taken into account in the aggregation. When known gaps exist in the
+data, they should be carefully inspected to assess their possible 
+impact on the estimation. 
+
+The \verb@OT2MAX@ function was designed to compute the $r$~largest
+observations as well as some diagnostics when known missing periods
+exist. The formal argument \verb@OTdata@ of this function corresponds
+to a data frame with two columns: a \verb@date@ column and a column
+containing the variable~$X$, as in the \verb@OTdata@ element of an
+object of the \verb@"Rendata"@ class. The \verb@maxMissingFrac@ gives
+the maximum fraction (between $0$ and $1$) of gap within a block. When
+this fraction is exceeded in a block, the returned block observations are
+\verb@NA@.  By default, the function produces a plot as shown in figure~\ref{DUNKMAX}. 
+
+The \verb@Dunkerque@ data set used here is similar to \verb@Brest@:
+it also concern sea surge and embeds missing periods, but the data
+cover a smaller period of time.
+
+\index{Dunkerque data@{\texttt{Dunkerque} data}}
+
+<<Dunk1, fig=TRUE, include=FALSE>>=
+RD <- Dunkerque
+OTdata <- RD$OTdata; OTmissing <- RD$OTmissing
+## allow up to 50% of gap within each block, or only 5%?
+MAX1 <- OT2MAX(OTdata = OTdata, OTmissing = OTmissing,
+               maxMissingFrac = 0.5,
+               main = "impact of the 'maxMissingFrac' formal")
+MAX2 <- OT2MAX(OTdata = OTdata, OTmissing = OTmissing, dataFrames = TRUE,
+               prefix = "Max", maxMissingFrac = 0.05, plot = FALSE)
+lines(MAX2$MAXdata$date, MAX2$MAXdata$Surge, type = "h", col = "red", lwd = 3)
+legend("topleft", lw = c(1, 3), col = c("black", "orangered"),
+       legend = c("50% max", " 5% max"))
+@
+
+\noindent
+The \verb@OTmissing@ element of \verb@Dunkerque@ reports quite large
+gaps in the nineties (e.g. from October of 1992 to July of 1995).  With the
+larger value \verb@maxMissingFrac = 0.5@, up to $50\%$ of a block can
+be a gap, and fewer \verb@NA@ block observations result than when
+a small value of \verb@maxMissingFrac@ is used.
+
+
+
+\begin{figure}
+\begin{tabular}{c c} 
+     \includegraphics[width=7cm]{Rgraphics/fig-Dunk1.pdf} & 
+     \includegraphics[width=7cm]{Rgraphics/fig-Dunk2.pdf} 
+   \end{tabular}
+   \caption{\label{DUNKMAX} Left: block maxima for \texttt{Dunkerque}
+   with \texttt{maxMissing} set to \texttt{0.5} and
+   \texttt{0.05}. Right: the $r$ largest observations 
+   for $r=4$. Each annual block can contain up to $4$ 
+   observations.
+ }
+\end{figure}
+
+<<Dunk2, fig=TRUE, include=FALSE>>=
+## r largest obs for r = 4
+MAX3 <- OT2MAX(OTdata, OTmissing = OTmissing, MAX.r = 4,
+               maxMissingFrac = 0.9, 
+               dataFrames = FALSE, trace = TRUE,
+               main = "r largest with r = 4")
+
+## restrict the period
+MAX4 <- OT2MAX(OTdata, OTmissing = OTmissing, MAX.r = 4,
+               start = "1962-01-01",
+               end = "1990-01-01",
+               maxMissingFrac = 0.9, 
+               dataFrames = FALSE, trace = TRUE,
+               main = "r-largest with r = 4 with given 'start' and 'end'")
+## use in a block maxima analysis, as if there were no gaps.
+fitDunk <- fGEV.MAX(MAX.data = MAX3$data,
+                    MAX.effDuration = rep(1, length(MAX3$effDuration)))   
+@ 
+
+\subsection{Diagnostics for gaps}
+%%--------------------------------------
+\label{DiagGaps}
+A quite common problem with gaps is that they can conceal a seasonal
+effect: the probability that a randomly selected time $T$ falls in a
+gap can differ according to the season of $T$. Even if the gaps are
+really exogenous, this may cause a bias in models, either POT or block
+maxima. For example severe storm surges occur mainly in winter, so a
+gap with a six month duration will probably lead to loose more of
+large observations when it is located in winter rather than in
+summer. This can be controlled by estimating the probability that $T$
+falls in a gap according to its location in the year. The
+\verb@plotType@ argument of \verb@OT2MAX@ provides an useful related
+diagnostic.
+
+<<Dunk3, fig=TRUE, include=FALSE>>=
+ ## plot the gap rate
+MAX5 <- OT2MAX(OTdata = OTdata, OTmissing = OTmissing,
+                maxMissingFrac = 0.5,
+                main = "probability of being in a  gap",
+                plotType = "gap")
+@ 
+
+\noindent
+The plot (fig~\ref{DUNKDIAG}, left) shows that the probability of falling
+in a gap does not have a very strong variation along one year, and
+broadly ranges from $1/5$ to $1/3$. The horizontal segments in gray
+show jitterised versions of the gap rates for all the year $\times$
+month pairs. Many of these rates are equal to $0$ (no gap in the month) and
+several of them are equal to $1$ (fully missing month).
+
+A complementary diagnostic is obtained by plotting a yearly time
+series for each month of a year (as in fig~\ref{DUNKDIAG} right), thus
+showing the evolution of the gap fraction in a given month.
+
+<<Dunk4, fig=TRUE, include=FALSE>>=
+require(lattice)
+xyplot(MAX5$monthGapTS[ , c(1:3, 10:12)], type = "h", lwd = 2, ylim = c(0, 1))
+@ 
+
+\noindent
+The \pkg{lattice} base package \citep{PACKlattice} used here
+provides nice plots for multiple time series.
+
+\begin{figure}
+\begin{tabular}{c c} 
+     \includegraphics[width=7cm]{Rgraphics/fig-Dunk3.pdf} & 
+     \includegraphics[width=7cm]{Rgraphics/fig-Dunk4.pdf} 
+   \end{tabular}
+   \caption{
+     \label{DUNKDIAG}
+     Controlling the possible impact of gaps. Left: the probability
+     that a day in the year falls in a gap is shown in orange. The
+     horizontal segments in gray show a jitterised version of the gap
+     fraction for a year/month combination. Right: yearly time series
+     of gap fraction for six months.  \index{jitter}}
+\end{figure}
+
+
+
+\index{OT2MAX function@{\texttt{OT2MAX} function}|)}
+\index{missing periods!in blocks|)}

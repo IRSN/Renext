@@ -1,0 +1,15 @@
+TODO
+doc/Renext.bib
+doc/RenextGuide.(?![p])
+doc/.*~
+doc/ANN*
+doc/Chap*
+doc/Rplots.pdf
+doc/jss.bst
+doc/SweaveCMD
+doc/images
+doc/Rgraphics
+doc/ChangeLog
+
+^.*\.Rproj$
+^\.Rproj\.user$

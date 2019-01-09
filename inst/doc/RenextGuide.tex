@@ -99,7 +99,7 @@
  
   \begin{tabular}{c}
     {\Large \sf Yves Deville}\rule{0pt}{5cm}\\
-    {\large \sf \today, Renext version 3.1.0} \rule{0pt}{5cm}\\
+    {\large \sf \today, Renext version 3.1.1} \rule{0pt}{5cm}\\
   \end{tabular}
 
 \end{center}
@@ -161,7 +161,7 @@
 \label{Chap-Intro}
 
 \begin{Prov}
-  This document was produced using  \textbf{Renext 3.1.0}. 
+  This document was produced using  \textbf{Renext 3.1.1}. 
   Function calls may have changed in subsequent versions of the package.
   More information on the \textbf{Renext} project can found at the 
   URL \url{https://gforge.irsn.fr/gf/project/renext}.
@@ -682,13 +682,15 @@ o Dataset Surge Heights at Brest (France)
 
 o OT data (main sample) from  1846-01-01  to  2009-01-01  (eff. dur. 147.62 years)
  
-      n    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
-1289.00   30.02   33.65   38.31   41.76   46.58  143.90 
+         n       Min.    1st Qu.     Median       Mean    3rd Qu.       Max. 
+1289.00000   30.02200   33.64700   38.30600   41.76007   46.58100  143.94900 
 
 o missing 'OT' periods, total 15.38 years 
 
-        n      Min.   1st Qu.    Median      Mean   3rd Qu.      Max. 
-43.000000  0.002738  0.016430  0.038330  0.357600  0.086240  8.419000 
+           n         Min.      1st Qu.       Median         Mean      3rd Qu. 
+43.000000000  0.002737851  0.016427105  0.038329911  0.357639718  0.086242300 
+        Max. 
+ 8.418891170 
 
 o no 'MAX' historical data 
 
@@ -1697,7 +1699,7 @@ returned by \verb@coef@. Many other results are returned.
  [6] "threshold"   "distname.y"  "p.y"         "parnames.y"  "fixed.y"    
 [11] "trans.y"     "est.N"       "cov.N"       "est.y"       "cov.y"      
 [16] "corr.y"      "estimate"    "fixed"       "df"          "nobs"       
-[21] "p"           "opt"         "logLik"      "sigma"      
+[21] "p"           "opt"         "logLik"      "logLikFun"  
 \end{Soutput}
 \end{Schunk}
 
@@ -1859,8 +1861,8 @@ can be important for the largest order statistics (i.e. for small $i$).
 \index{return level!plot|)}
 \index{plotting positions|)} 
 
-%% “Most are transformations of one another so that choice is partly
-%% a matter of taste.”
+%% Most are transformations of one another so that choice is partly
+%% a matter of taste.
 
 
 \section{Computational details}

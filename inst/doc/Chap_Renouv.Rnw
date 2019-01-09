@@ -217,8 +217,8 @@ can be important for the largest order statistics (i.e. for small $i$).
 \index{return level!plot|)}
 \index{plotting positions|)} 
 
-%% “Most are transformations of one another so that choice is partly
-%% a matter of taste.”
+%% Most are transformations of one another so that choice is partly
+%% a matter of taste.
 
 
 \section{Computational details}

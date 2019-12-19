@@ -99,16 +99,16 @@ Renouv <- function(x,
     if (!missing(MAX.data)) {
         MAX <- makeMAXdata(x = x, data = MAX.data, effDuration = MAX.effDuration)
     } else {
-        MAX <-makeMAXdata(x = x, effDuration = MAX.effDuration)
+        MAX <- makeMAXdata(x = x, effDuration = MAX.effDuration)
     }
     
     ## check and make OTSdata info
     if (!missing(OTS.data)) {
-        OTS <-  makeOTSdata(x = x, data = OTS.data, threshold = OTS.threshold,
-                            effDuration = OTS.effDuration)
+        OTS <- makeOTSdata(x = x, data = OTS.data, threshold = OTS.threshold,
+                           effDuration = OTS.effDuration)
     } else {
-        OTS <-  makeOTSdata(x = x, threshold = OTS.threshold,
-                            effDuration = OTS.effDuration)
+        OTS <- makeOTSdata(x = x, threshold = OTS.threshold,
+                           effDuration = OTS.effDuration)
     }
     
     if ( OTS$flag && (any(OTS$threshold < threshold)) )

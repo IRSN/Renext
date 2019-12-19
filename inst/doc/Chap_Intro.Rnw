@@ -3,7 +3,8 @@
 \label{Chap-Intro}
 
 \begin{Prov}
-  This document was produced using  \textbf{Renext \Sexpr{Renext.Version}}. 
+  This document was produced using  \textbf{Renext \Sexpr{Renext.Version}}
+  with \textbf{R~\Sexpr{R.Version()$major}.\Sexpr{R.Version()$minor}}. 
   Function calls may have changed in subsequent versions of the package.
   More information on the \textbf{Renext} project can found at the 
   URL \url{https://gforge.irsn.fr/gf/project/renext}.

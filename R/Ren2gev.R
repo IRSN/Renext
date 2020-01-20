@@ -66,7 +66,7 @@ Ren2gev <- function(object,
         parGev[ , "loc"] <- threshold  + (prov - 1) * parRen["scale"] / parRen["shape"]
     } else {
         prov <- 1.0
-        parGev[ , "loc"] <- threshold + log(parRen["lambda"] * w)
+        parGev[ , "loc"] <- threshold + parRen["scale"]  * log(parRen["lambda"] * w)
     }
     parGev[ , "scale"] <- parRen["scale"] * prov 
     parGev[ , "shape"] <- parRen["shape"]

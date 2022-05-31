@@ -1012,7 +1012,7 @@ Renouv <- function(x,
     
     if (plot) {
         p <- try(plot(res, label = label, ...)) 
-        if ( class(p) == "try-error" ) {
+        if (inherits(p, "try-error")) {
             warning("an error occured in calling 'plot' frow 'Renouv'.",
                     " Try using 'plot' on the result")
         }

@@ -13,3 +13,5 @@ doc/ChangeLog
 
 ^.*\.Rproj$
 ^\.Rproj\.user$
+README.Rmd
+README.md

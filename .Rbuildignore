@@ -10,6 +10,8 @@ doc/SweaveCMD
 doc/images
 doc/Rgraphics
 doc/ChangeLog
+^\.github
+^\.git
 
 ^.*\.Rproj$
 ^\.Rproj\.user$

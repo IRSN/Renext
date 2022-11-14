@@ -1,5 +1,4 @@
-### R code from vignette source '/home/yves/Bureau/gforgeIRSN/Renext/inst/doc/RenextGuide.Rnw'
-### Encoding: UTF-8
+### R code from vignette source '/home/yves/Bureau/myGitHub/Renext/inst/doc/RenextGuide.Rnw'
 
 ###################################################
 ### code chunk number 1: options
@@ -11,14 +10,14 @@ library(Renext)
 
 
 ###################################################
-### code chunk number 2: Chap_Intro.Rnw:423-425
+### code chunk number 2: Chap_Intro.Rnw:424-426
 ###################################################
 library(Renext)
 names(Brest)
 
 
 ###################################################
-### code chunk number 3: Chap_Intro.Rnw:432-434
+### code chunk number 3: Chap_Intro.Rnw:433-435
 ###################################################
 head(Brest$OTdata, n = 4)
 str(Brest$OTinfo)

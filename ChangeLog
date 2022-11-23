@@ -5,7 +5,7 @@ CHANGES
 
 	o No longer check on the class of objects, `inherits`.
 
-	o Fixes in doc (URLs).
+	o Fixes in doc (URLs, ...).
 	
 
 	

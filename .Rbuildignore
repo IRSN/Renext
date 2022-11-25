@@ -10,6 +10,8 @@ doc/SweaveCMD
 doc/images
 doc/Rgraphics
 doc/ChangeLog
+inst/computing
+computing
 ^\.github
 ^\.git
 

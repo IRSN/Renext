@@ -17,4 +17,11 @@ status](https://www.r-pkg.org/badges/version/Renext)](https://cran.r-project.org
 ## Renext package
 
 This repository contains the complete source code of the **Renext**
-package, relased on CRAN since 2010.
+package, released on CRAN since 2010. The package is still maintained
+but no new development is planned.
+
+The [Renext Computing
+Details](https://github.com/IRSN/Renext/inst/computing/RenextCompDet.pdf)
+document is available here, but is not included in the package source
+tarball `tar.gz`. Although this document is more than 10 years old, it
+is re-compiled from time to time with slight fixes/changes.

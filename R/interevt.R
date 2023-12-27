@@ -69,7 +69,8 @@ skip2noskip <- function(skip = NULL,
                  "must be non-null")
         noskip <- data.frame(start = as.POSIXct(start, tz = "GMT"),
                              end = as.POSIXct(end, tz = "GMT"),
-                             stingsAsFactors = FALSE)
+                             period = 1L,
+                             stringsAsFactors = FALSE)
         return(noskip)
     }
 

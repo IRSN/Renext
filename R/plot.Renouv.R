@@ -335,7 +335,7 @@ plot.Renouv <- function(x,
 
     ## After this, 'byBlockStyle' is a list with both elements "MAX" and "OTS"
     ## existing
-    if (is.null(byBlockStyle)){
+    if (is.null(byBlockStyle)) {
         byBlockStyle <- list()
         if (is.null(x$x.OT)) {
             ## maybe block maxima with OTS data ?

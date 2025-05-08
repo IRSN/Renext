@@ -93,7 +93,7 @@ anova.Renouv <- function(object, object1, trace = 1L, ...) {
     ## parameters)
     
     if ((object1$distname.y %in% c("gpd", "GPD", "lomax", "maxlo")) &&
-        (object1$df == 3L) && (object$distname.y %in% c("exp", "exponential")))  {
+        (object1$df == 3L) && (object$distname.y %in% c("exp", "exponential"))) {
         
         H0 <- "exponential"
         
@@ -103,7 +103,6 @@ anova.Renouv <- function(object, object1, trace = 1L, ...) {
         }
         
         if (!object$history.MAX$flag && !object$history.OTS$flag) {
-            
             if (n <= 500) {
                 meth <- "num"
                 method <- "numerical approximation"
@@ -111,7 +110,9 @@ anova.Renouv <- function(object, object1, trace = 1L, ...) {
                 meth <- "asymp"
                 method <- "asymptotic approximation"
             }
-            
+            Test <- LRExp.test(object$y.OT, alternative = alternative,
+                           method = meth)
+            pVal <- Test$p.value
         } else {
             ## the models embed MAX or OTS data.
             if (object$nobs < 50L) {
@@ -119,16 +120,17 @@ anova.Renouv <- function(object, object1, trace = 1L, ...) {
                         "here")
             }
             meth <- "asymp"
-            method <- "asymptotic approximation"   
+            method <- "asymptotic approximation"
+            pVal <- pchisq(w, df = 1, lower.tail = FALSE) 
         }
-        
-        Test <- LRExp.test(object$y.OT, alternative = alternative,
-                           method = meth)
-        pVal <- Test$p.value
           
     } else {
-        method <- "asymptotic approximation"
-        pVal <- pchisq(w, df = 1, lower.tail = FALSE) 
+        if (object$nobs < 50L) {
+            warning("asymptotic distribution may not be accurate ",
+                    "here")
+        }
+        method <- "general asymptotic approximation"
+        pVal <- pchisq(w, df = dfDiff, lower.tail = FALSE) 
     }
 
     if (trace) cat("Method used: ", method, "\n\n")

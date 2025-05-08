@@ -132,7 +132,7 @@ NBlevy(N,
 
 }
 \seealso{\code{\link{NegBinomial}} for the negative binomial distribution,
-  \code{\link{glm.nb}} from the MASS package for fitting Generalised
+  \code{\link[MASS]{glm.nb}} from the MASS package for fitting Generalised
   Linear Model of the negative binomial family.}
 \examples{
 ## known parameters

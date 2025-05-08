@@ -1,9 +1,21 @@
 Package: Renext
 Type: Package
 Title: Renewal Method for Extreme Values Extrapolation
-Version: 3.1-4
-Date: 2023-08-29
-Author: Yves Deville <deville.yves@alpestat.com>, Lise Bardet <lise.bardet@irsn.fr>
+Version: 3.1-5
+Date: 2025-05-08
+Authors@R:
+    c(person(given = "Yves",
+             family = "Deville",
+             role = "aut",
+             email = "deville.yves@alpestat.com",
+	     comment = c(ORCID = "0000-0002-1233-488X")),
+      person(family = "Bardet",
+             role = "aut",
+             email = "lise.bardet@irsn.fr"),
+      person(given = "Yann",
+             family = "Richet",
+             role = "cre",
+             email = "yann.richet@irsn.fr"))
 Maintainer: Yann Richet <yann.richet@irsn.fr>
 URL: https://github.com/IRSN/Renext, https://irsn.github.io/Renext/
 Depends: R (>= 2.8.0), stats, graphics, evd

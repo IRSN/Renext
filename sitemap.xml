@@ -1,222 +1,76 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <url>
-    <loc>https://irsn.github.io/Renext/404.html</loc>
-  </url>
-  <url>
-    <loc>https://irsn.github.io/Renext/CAUTION.html</loc>
-  </url>
-  <url>
-    <loc>https://irsn.github.io/Renext/authors.html</loc>
-  </url>
-  <url>
-    <loc>https://irsn.github.io/Renext/index.html</loc>
-  </url>
-  <url>
-    <loc>https://irsn.github.io/Renext/reference/Brest.html</loc>
-  </url>
-  <url>
-    <loc>https://irsn.github.io/Renext/reference/Brest.years.html</loc>
-  </url>
-  <url>
-    <loc>https://irsn.github.io/Renext/reference/Brest.years.missing.html</loc>
-  </url>
-  <url>
-    <loc>https://irsn.github.io/Renext/reference/CV2.html</loc>
-  </url>
-  <url>
-    <loc>https://irsn.github.io/Renext/reference/CV2.test.html</loc>
-  </url>
-  <url>
-    <loc>https://irsn.github.io/Renext/reference/Dunkerque.html</loc>
-  </url>
-  <url>
-    <loc>https://irsn.github.io/Renext/reference/EM.mixexp.html</loc>
-  </url>
-  <url>
-    <loc>https://irsn.github.io/Renext/reference/GPD.html</loc>
-  </url>
-  <url>
-    <loc>https://irsn.github.io/Renext/reference/Garonne.html</loc>
-  </url>
-  <url>
-    <loc>https://irsn.github.io/Renext/reference/Hpoints.html</loc>
-  </url>
-  <url>
-    <loc>https://irsn.github.io/Renext/reference/Jackson.html</loc>
-  </url>
-  <url>
-    <loc>https://irsn.github.io/Renext/reference/Jackson.test.html</loc>
-  </url>
-  <url>
-    <loc>https://irsn.github.io/Renext/reference/LRExp.html</loc>
-  </url>
-  <url>
-    <loc>https://irsn.github.io/Renext/reference/LRExp.test.html</loc>
-  </url>
-  <url>
-    <loc>https://irsn.github.io/Renext/reference/LRGumbel.html</loc>
-  </url>
-  <url>
-    <loc>https://irsn.github.io/Renext/reference/LRGumbel.test.html</loc>
-  </url>
-  <url>
-    <loc>https://irsn.github.io/Renext/reference/Lomax.html</loc>
-  </url>
-  <url>
-    <loc>https://irsn.github.io/Renext/reference/Maxlo.html</loc>
-  </url>
-  <url>
-    <loc>https://irsn.github.io/Renext/reference/MixExp2.html</loc>
-  </url>
-  <url>
-    <loc>https://irsn.github.io/Renext/reference/NBlevy.html</loc>
-  </url>
-  <url>
-    <loc>https://irsn.github.io/Renext/reference/OT2MAX.html</loc>
-  </url>
-  <url>
-    <loc>https://irsn.github.io/Renext/reference/OTjitter.html</loc>
-  </url>
-  <url>
-    <loc>https://irsn.github.io/Renext/reference/PPplot.html</loc>
-  </url>
-  <url>
-    <loc>https://irsn.github.io/Renext/reference/RLlegend.html</loc>
-  </url>
-  <url>
-    <loc>https://irsn.github.io/Renext/reference/RLpar.html</loc>
-  </url>
-  <url>
-    <loc>https://irsn.github.io/Renext/reference/RLplot.html</loc>
-  </url>
-  <url>
-    <loc>https://irsn.github.io/Renext/reference/Ren2gev.html</loc>
-  </url>
-  <url>
-    <loc>https://irsn.github.io/Renext/reference/Ren2gumbel.html</loc>
-  </url>
-  <url>
-    <loc>https://irsn.github.io/Renext/reference/Renext-package.html</loc>
-  </url>
-  <url>
-    <loc>https://irsn.github.io/Renext/reference/Renouv.html</loc>
-  </url>
-  <url>
-    <loc>https://irsn.github.io/Renext/reference/RenouvNoEst.html</loc>
-  </url>
-  <url>
-    <loc>https://irsn.github.io/Renext/reference/SLTW.html</loc>
-  </url>
-  <url>
-    <loc>https://irsn.github.io/Renext/reference/SandT.html</loc>
-  </url>
-  <url>
-    <loc>https://irsn.github.io/Renext/reference/anova.Renouv.html</loc>
-  </url>
-  <url>
-    <loc>https://irsn.github.io/Renext/reference/barplotRenouv.html</loc>
-  </url>
-  <url>
-    <loc>https://irsn.github.io/Renext/reference/expplot.html</loc>
-  </url>
-  <url>
-    <loc>https://irsn.github.io/Renext/reference/fGEV.MAX.html</loc>
-  </url>
-  <url>
-    <loc>https://irsn.github.io/Renext/reference/fGPD.html</loc>
-  </url>
-  <url>
-    <loc>https://irsn.github.io/Renext/reference/fgamma.html</loc>
-  </url>
-  <url>
-    <loc>https://irsn.github.io/Renext/reference/flomax.html</loc>
-  </url>
-  <url>
-    <loc>https://irsn.github.io/Renext/reference/fmaxlo.html</loc>
-  </url>
-  <url>
-    <loc>https://irsn.github.io/Renext/reference/fweibull.html</loc>
-  </url>
-  <url>
-    <loc>https://irsn.github.io/Renext/reference/gev2Ren.html</loc>
-  </url>
-  <url>
-    <loc>https://irsn.github.io/Renext/reference/gof.date.html</loc>
-  </url>
-  <url>
-    <loc>https://irsn.github.io/Renext/reference/gofExp.test.html</loc>
-  </url>
-  <url>
-    <loc>https://irsn.github.io/Renext/reference/gumbel2Ren.html</loc>
-  </url>
-  <url>
-    <loc>https://irsn.github.io/Renext/reference/index.html</loc>
-  </url>
-  <url>
-    <loc>https://irsn.github.io/Renext/reference/ini.mixexp2.html</loc>
-  </url>
-  <url>
-    <loc>https://irsn.github.io/Renext/reference/iniMAX.html</loc>
-  </url>
-  <url>
-    <loc>https://irsn.github.io/Renext/reference/interevt.html</loc>
-  </url>
-  <url>
-    <loc>https://irsn.github.io/Renext/reference/logLik.Renouv.html</loc>
-  </url>
-  <url>
-    <loc>https://irsn.github.io/Renext/reference/mom.mixexp2.html</loc>
-  </url>
-  <url>
-    <loc>https://irsn.github.io/Renext/reference/mom2par.html</loc>
-  </url>
-  <url>
-    <loc>https://irsn.github.io/Renext/reference/pGreenwood1.html</loc>
-  </url>
-  <url>
-    <loc>https://irsn.github.io/Renext/reference/parDeriv.html</loc>
-  </url>
-  <url>
-    <loc>https://irsn.github.io/Renext/reference/plot.Rendata.html</loc>
-  </url>
-  <url>
-    <loc>https://irsn.github.io/Renext/reference/plot.Renouv.html</loc>
-  </url>
-  <url>
-    <loc>https://irsn.github.io/Renext/reference/predict.Renouv.html</loc>
-  </url>
-  <url>
-    <loc>https://irsn.github.io/Renext/reference/qStat.html</loc>
-  </url>
-  <url>
-    <loc>https://irsn.github.io/Renext/reference/rRendata.html</loc>
-  </url>
-  <url>
-    <loc>https://irsn.github.io/Renext/reference/readXML.html</loc>
-  </url>
-  <url>
-    <loc>https://irsn.github.io/Renext/reference/roundPred.html</loc>
-  </url>
-  <url>
-    <loc>https://irsn.github.io/Renext/reference/skip2noskip.html</loc>
-  </url>
-  <url>
-    <loc>https://irsn.github.io/Renext/reference/spacings.html</loc>
-  </url>
-  <url>
-    <loc>https://irsn.github.io/Renext/reference/summary.Rendata.html</loc>
-  </url>
-  <url>
-    <loc>https://irsn.github.io/Renext/reference/summary.Renouv.html</loc>
-  </url>
-  <url>
-    <loc>https://irsn.github.io/Renext/reference/translude.html</loc>
-  </url>
-  <url>
-    <loc>https://irsn.github.io/Renext/reference/vcov.Renouv.html</loc>
-  </url>
-  <url>
-    <loc>https://irsn.github.io/Renext/reference/weibplot.html</loc>
-  </url>
+<urlset xmlns = 'http://www.sitemaps.org/schemas/sitemap/0.9'>
+<url><loc>https://irsn.github.io/Renext/404.html</loc></url>
+<url><loc>https://irsn.github.io/Renext/CAUTION.html</loc></url>
+<url><loc>https://irsn.github.io/Renext/authors.html</loc></url>
+<url><loc>https://irsn.github.io/Renext/index.html</loc></url>
+<url><loc>https://irsn.github.io/Renext/reference/Brest.html</loc></url>
+<url><loc>https://irsn.github.io/Renext/reference/Brest.years.html</loc></url>
+<url><loc>https://irsn.github.io/Renext/reference/Brest.years.missing.html</loc></url>
+<url><loc>https://irsn.github.io/Renext/reference/CV2.html</loc></url>
+<url><loc>https://irsn.github.io/Renext/reference/CV2.test.html</loc></url>
+<url><loc>https://irsn.github.io/Renext/reference/Dunkerque.html</loc></url>
+<url><loc>https://irsn.github.io/Renext/reference/EM.mixexp.html</loc></url>
+<url><loc>https://irsn.github.io/Renext/reference/GPD.html</loc></url>
+<url><loc>https://irsn.github.io/Renext/reference/Garonne.html</loc></url>
+<url><loc>https://irsn.github.io/Renext/reference/Hpoints.html</loc></url>
+<url><loc>https://irsn.github.io/Renext/reference/Jackson.html</loc></url>
+<url><loc>https://irsn.github.io/Renext/reference/Jackson.test.html</loc></url>
+<url><loc>https://irsn.github.io/Renext/reference/LRExp.html</loc></url>
+<url><loc>https://irsn.github.io/Renext/reference/LRExp.test.html</loc></url>
+<url><loc>https://irsn.github.io/Renext/reference/LRGumbel.html</loc></url>
+<url><loc>https://irsn.github.io/Renext/reference/LRGumbel.test.html</loc></url>
+<url><loc>https://irsn.github.io/Renext/reference/Lomax.html</loc></url>
+<url><loc>https://irsn.github.io/Renext/reference/Maxlo.html</loc></url>
+<url><loc>https://irsn.github.io/Renext/reference/MixExp2.html</loc></url>
+<url><loc>https://irsn.github.io/Renext/reference/NBlevy.html</loc></url>
+<url><loc>https://irsn.github.io/Renext/reference/OT2MAX.html</loc></url>
+<url><loc>https://irsn.github.io/Renext/reference/OTjitter.html</loc></url>
+<url><loc>https://irsn.github.io/Renext/reference/PPplot.html</loc></url>
+<url><loc>https://irsn.github.io/Renext/reference/RLlegend.html</loc></url>
+<url><loc>https://irsn.github.io/Renext/reference/RLpar.html</loc></url>
+<url><loc>https://irsn.github.io/Renext/reference/RLplot.html</loc></url>
+<url><loc>https://irsn.github.io/Renext/reference/Ren2gev.html</loc></url>
+<url><loc>https://irsn.github.io/Renext/reference/Ren2gumbel.html</loc></url>
+<url><loc>https://irsn.github.io/Renext/reference/Renext-package.html</loc></url>
+<url><loc>https://irsn.github.io/Renext/reference/Renouv.html</loc></url>
+<url><loc>https://irsn.github.io/Renext/reference/RenouvNoEst.html</loc></url>
+<url><loc>https://irsn.github.io/Renext/reference/SLTW.html</loc></url>
+<url><loc>https://irsn.github.io/Renext/reference/SandT.html</loc></url>
+<url><loc>https://irsn.github.io/Renext/reference/anova.Renouv.html</loc></url>
+<url><loc>https://irsn.github.io/Renext/reference/barplotRenouv.html</loc></url>
+<url><loc>https://irsn.github.io/Renext/reference/expplot.html</loc></url>
+<url><loc>https://irsn.github.io/Renext/reference/fGEV.MAX.html</loc></url>
+<url><loc>https://irsn.github.io/Renext/reference/fGPD.html</loc></url>
+<url><loc>https://irsn.github.io/Renext/reference/fgamma.html</loc></url>
+<url><loc>https://irsn.github.io/Renext/reference/flomax.html</loc></url>
+<url><loc>https://irsn.github.io/Renext/reference/fmaxlo.html</loc></url>
+<url><loc>https://irsn.github.io/Renext/reference/fweibull.html</loc></url>
+<url><loc>https://irsn.github.io/Renext/reference/gev2Ren.html</loc></url>
+<url><loc>https://irsn.github.io/Renext/reference/gof.date.html</loc></url>
+<url><loc>https://irsn.github.io/Renext/reference/gofExp.test.html</loc></url>
+<url><loc>https://irsn.github.io/Renext/reference/gumbel2Ren.html</loc></url>
+<url><loc>https://irsn.github.io/Renext/reference/index.html</loc></url>
+<url><loc>https://irsn.github.io/Renext/reference/ini.mixexp2.html</loc></url>
+<url><loc>https://irsn.github.io/Renext/reference/iniMAX.html</loc></url>
+<url><loc>https://irsn.github.io/Renext/reference/interevt.html</loc></url>
+<url><loc>https://irsn.github.io/Renext/reference/logLik.Renouv.html</loc></url>
+<url><loc>https://irsn.github.io/Renext/reference/mom.mixexp2.html</loc></url>
+<url><loc>https://irsn.github.io/Renext/reference/mom2par.html</loc></url>
+<url><loc>https://irsn.github.io/Renext/reference/pGreenwood1.html</loc></url>
+<url><loc>https://irsn.github.io/Renext/reference/parDeriv.html</loc></url>
+<url><loc>https://irsn.github.io/Renext/reference/plot.Rendata.html</loc></url>
+<url><loc>https://irsn.github.io/Renext/reference/plot.Renouv.html</loc></url>
+<url><loc>https://irsn.github.io/Renext/reference/predict.Renouv.html</loc></url>
+<url><loc>https://irsn.github.io/Renext/reference/qStat.html</loc></url>
+<url><loc>https://irsn.github.io/Renext/reference/rRendata.html</loc></url>
+<url><loc>https://irsn.github.io/Renext/reference/readXML.html</loc></url>
+<url><loc>https://irsn.github.io/Renext/reference/roundPred.html</loc></url>
+<url><loc>https://irsn.github.io/Renext/reference/skip2noskip.html</loc></url>
+<url><loc>https://irsn.github.io/Renext/reference/spacings.html</loc></url>
+<url><loc>https://irsn.github.io/Renext/reference/summary.Rendata.html</loc></url>
+<url><loc>https://irsn.github.io/Renext/reference/summary.Renouv.html</loc></url>
+<url><loc>https://irsn.github.io/Renext/reference/translude.html</loc></url>
+<url><loc>https://irsn.github.io/Renext/reference/vcov.Renouv.html</loc></url>
+<url><loc>https://irsn.github.io/Renext/reference/weibplot.html</loc></url>
 </urlset>
+

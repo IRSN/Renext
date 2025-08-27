@@ -5,7 +5,8 @@ BUG FIXES
 	o The `anova` method of the `"Renouv"` class did
 	not work as it should.
 
-	o Fixes in doc and in the `DESCRIPTION` file.
+	o Fixes in doc and in the `DESCRIPTION` file to fix problems
+	revealed by CRAN checks.
 	
 	
 	        CHANGES IN Renext package VERSION 3.1-4

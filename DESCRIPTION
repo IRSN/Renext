@@ -15,7 +15,7 @@ Authors@R:
       person(given = "Nathan",
              family = "Bengaouer",
              role = "cre",
-             email = "nathan.bengaouer@arsn.fr"))
+             email = "nathan.bengaouer@asnr.fr"))
 URL: https://github.com/IRSN/Renext, https://irsn.github.io/Renext/
 Depends: R (>= 2.8.0), stats, graphics, evd
 Imports: numDeriv, splines, methods

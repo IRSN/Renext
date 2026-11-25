@@ -59,7 +59,7 @@ expplot <- function(x,
 
   if (!is.null(rate)) {
     
-    x.g <- seq(from = min(x), to = max(x) , length = 50)
+    x.g <- seq(from = min(x), to = max(x) , length.out = 50)
     nW <- length(rate)
 
     if (mono) {

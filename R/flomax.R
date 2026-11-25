@@ -176,7 +176,7 @@
         
         ## prepare grid and compute the limit
         lcInf <- -n * (1 + log(mean(x)))
-        betas <- seq(from = interv[1], to = interv[2], length = 200)   
+        betas <- seq(from = interv[1], to = interv[2], length.out = 200)   
         fs <- sapply(betas, logLc)
         dfs <- sapply(betas, dlogLc)
         
@@ -354,7 +354,7 @@
     
     if (plot) {
         Stext <- ifelse(scaleData, "(scaled data)", "")
-        betas <- seq(from = interv[1], to = interv[2], length = 200)
+        betas <- seq(from = interv[1], to = interv[2], length.out = 200)
         fs <- sapply(betas, logL1)
         dfs <- c(NA, diff(fs) / diff(betas))
         ## ind <- 1L:length(betas)

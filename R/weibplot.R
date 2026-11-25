@@ -56,7 +56,7 @@
             warning("'scale' is NULL, hence no use of 'shape'")
         } else {
             
-            x.g <- seq(from = min(x), to = max(x) , length = 50)
+            x.g <- seq(from = min(x), to = max(x) , length.out = 50)
             
             nW <- max(c(length(shape), length(scale)))
             shape <- rep(shape, length.out = nW)

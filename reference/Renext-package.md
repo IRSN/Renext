@@ -181,7 +181,7 @@ summary(fG)
 #>  Exact one-sample Kolmogorov-Smirnov test
 #> 
 #> data:  OTjitter(y.OT, threshold = 0)
-#> D = 0.12861, p-value = 0.0714
+#> D = 0.12846, p-value = 0.07196
 #> alternative hypothesis: two-sided
 #> 
 #> 

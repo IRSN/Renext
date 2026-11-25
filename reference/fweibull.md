@@ -86,6 +86,7 @@ Weibull plots.
 ## Examples
 
 ``` r
+
 n <- 1000
 set.seed(1234)
 shape <- 2 * runif(1)

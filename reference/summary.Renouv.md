@@ -162,7 +162,7 @@ summary(fit)
 #>  Asymptotic one-sample Kolmogorov-Smirnov test
 #> 
 #> data:  OTjitter(y.OT, threshold = 0)
-#> D = 0.02115, p-value = 0.6115
+#> D = 0.021165, p-value = 0.6106
 #> alternative hypothesis: two-sided
 #> 
 #> 

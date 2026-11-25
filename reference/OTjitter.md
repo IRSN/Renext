@@ -57,5 +57,5 @@ nlevels(as.factor(x))
 nlevels(as.factor(xmod))
 #> [1] 151
 max(abs(x-xmod))
-#> [1] 5.867549
+#> [1] 5.545804
 ```

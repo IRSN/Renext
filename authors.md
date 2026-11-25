@@ -14,13 +14,13 @@ Source:
 [`DESCRIPTION`](https://github.com/IRSN/Renext/blob/main/DESCRIPTION)
 
 Deville Y, Bardet (2026). *Renext: Renewal Method for Extreme Values
-Extrapolation*. R package version 3.1-5,
+Extrapolation*. R package version 3.1-6,
 <https://github.com/IRSN/Renext>.
 
     @Manual{,
       title = {Renext: Renewal Method for Extreme Values Extrapolation},
       author = {Yves Deville and {Bardet}},
       year = {2026},
-      note = {R package version 3.1-5},
+      note = {R package version 3.1-6},
       url = {https://github.com/IRSN/Renext},
     }

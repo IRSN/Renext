@@ -1,4 +1,17 @@
-	        CHANGES IN Renext package VERSION 3.1-5
+
+          	CHANGES IN Renext package VERSION 3.1-6
+
+BUG FIXES
+
+	o Partial matching was used in the `seq` methods. Thanks to Hugo
+	Gruson.
+
+	o In the *Renext Guide* document, an URL was deprecated. 
+
+
+
+	
+          	CHANGES IN Renext package VERSION 3.1-5
 
 BUG FIXES
 
